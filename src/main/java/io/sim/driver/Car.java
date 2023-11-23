@@ -414,7 +414,7 @@ public class Car extends Vehicle implements Runnable {
 	}
 
 	public void setSpeed(double speed) throws Exception {
-		this.sumo.do_job_set(Vehicle.setSpeedMode(this.idCar, 2));
+		this.sumo.do_job_set(Vehicle.setSpeedMode(this.idCar, 27)); // [0 1 1 0 1 1] (binário) ou 27 (decimal)
 		this.sumo.do_job_set(Vehicle.setSpeed(this.idCar, speed));
 	}
 

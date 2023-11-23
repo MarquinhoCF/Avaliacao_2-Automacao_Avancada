@@ -3,7 +3,7 @@ package io.sim;
 import io.sim.simulator.EnvSimulator;
 
 /**
- * Classe que inica toda a aplicação
+ * Classe que inicia toda a aplicação
  */
 public class App {
     public static void main(String[] args) throws InterruptedException {

@@ -73,4 +73,42 @@ public class Rota {
         return routes;
     }
 
+    public static ArrayList<Rota> criaArrayRotaAV2(String xmlFilePath, int replicacoes) {
+        ArrayList<Rota> routes = new ArrayList<>();
+    
+        try {
+            // Configurando as classes necessárias para a análise do documento XML
+            File xmlFile = new File(xmlFilePath);
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(xmlFile);
+    
+            // Obtendo a lista de elementos com a tag "vehicle" do documento
+            NodeList vehicleList = doc.getElementsByTagName("vehicle");
+    
+            // Verifica se há pelo menos um veículo
+            if (vehicleList.getLength() > 0) {
+                Element firstVehicleElement = (Element) vehicleList.item(0);
+                String idRouteAux = firstVehicleElement.getAttribute("id");
+                NodeList routeList = firstVehicleElement.getElementsByTagName("route");
+    
+                // Verifica se há pelo menos uma rota
+                if (routeList.getLength() > 0) {
+                    Element firstRouteElement = (Element) routeList.item(0);
+                    String edges = firstRouteElement.getAttribute("edges");
+    
+                    // Replicar a rota 100 vezes
+                    for (int i = 0; i < replicacoes; i++) {
+                        Rota route = new Rota(idRouteAux + "_" + i, edges);
+                        routes.add(route);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    
+        return routes;
+    }
+    
 }

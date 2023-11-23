@@ -47,7 +47,7 @@ public class Company extends Thread {
         this.canectandoCars = true;
 
         // Atributos da classe
-        rotasDisp = Rota.criaRotasXML(xmlPath);
+        rotasDisp = Rota.criaArrayRotaAV2(xmlPath, 100);
 		System.out.println("Rotas: "+ rotasDisp.size()+" rotas disponiveis");
         rotasEmExec = new ArrayList<Rota>();
         rotasTerminadas = new ArrayList<Rota>();

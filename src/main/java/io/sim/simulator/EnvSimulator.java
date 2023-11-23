@@ -37,9 +37,9 @@ public class EnvSimulator extends Thread {
         portaSUMO = 12345;
         portaCompany = 23415;
         portaAlphaBank = 54321;
-        taxaAquisicao = 300;
-        numDrivers = 100;
-        rotasXML = "data/dados.xml";
+        taxaAquisicao = 100;
+        numDrivers = 1;
+        rotasXML = "data/dadosAV2.xml";
     }
 
     public void run() {
