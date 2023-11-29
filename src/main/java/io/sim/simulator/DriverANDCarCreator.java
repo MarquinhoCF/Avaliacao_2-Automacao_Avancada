@@ -29,7 +29,7 @@ public class DriverANDCarCreator {
     }
 
     // Método estático para criar um objeto Car com cores aleatórias
-    private static Car createCar(String idCar, String driverID, long taxaAquisicao, SumoTraciConnection sumo, String host, int companyServerPort, boolean considerarConsumoComb) {
+    public static Car createCar(String idCar, String driverID, long taxaAquisicao, SumoTraciConnection sumo, String host, int companyServerPort, boolean considerarConsumoComb) {
         try {
             // Define as características comuns para os novos objetos Car
             boolean on_off = false;

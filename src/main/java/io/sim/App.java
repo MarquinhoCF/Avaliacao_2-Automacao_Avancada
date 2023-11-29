@@ -1,5 +1,6 @@
 package io.sim;
 
+import io.sim.reconciliation.Rec;
 import io.sim.simulator.EnvSimulator;
 
 /**
@@ -14,6 +15,10 @@ public class App {
         ev.start();
         ev.join();
         
+        Rec rec = new Rec();
+        rec.start();
+        rec.join();
+
         try {
             // Executa um passo de simulação no SUMO
             Thread.sleep(1000);

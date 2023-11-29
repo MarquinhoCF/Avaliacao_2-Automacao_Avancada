@@ -1,8 +1,13 @@
 package io.sim.reconciliation;
 
-public class Rec {
+public class Rec extends Thread {
 
-	public static void main(String[] args) {
+	public Rec() {
+    
+	}
+
+    @Override
+    public void run() {
 
 		//   F1    F3     F5     F6
 		// =====>O=====>O=====>O=====>

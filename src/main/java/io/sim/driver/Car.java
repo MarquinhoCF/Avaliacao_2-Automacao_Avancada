@@ -166,6 +166,7 @@ public class Car extends Vehicle implements Runnable {
 				ArrayList<String> edges = Rota.criaListaEdges(rota);
 				System.out.println("A rota " + rota.getID() + " precisa ser dividida em " + edges.size()/2 + " parciais");
 
+				int i = 0;
 				this.precisaAttExcel = 1;
 				boolean initRoute = true;
 				while (this.on_off) {
@@ -173,6 +174,7 @@ public class Car extends Vehicle implements Runnable {
 					if (carStatus != "abastecendo") {
 						this.carStatus = "rodando";
 					}
+
 					// Calcula a latitude e longitude iniciais da Rota Atual
 					if (initRoute) {
 						double[] coordGeo = calculaCoordGeograficas();
@@ -183,10 +185,11 @@ public class Car extends Vehicle implements Runnable {
 
 					if(!edges.isEmpty()) {
 						if(edgeAtual.equals(edges.get(0))){
-							edges.remove(0);
-							edges.remove(0);
+							String edge1 = edges.remove(0);
+							String edge2 = edges.remove(0);
 							this.precisaAttExcel = 1;
-							System.out.println("Percorreu mais 2 edges!!");
+							i++;
+							System.out.println("Partição " + i + ": " + edge1 + " " + edge2 + " percorridas");
 						}
 					}
 
@@ -214,7 +217,7 @@ public class Car extends Vehicle implements Runnable {
 						// System.out.println(this.idCar + " -> fuelTank: " + fuelTank);
 
 						// Atualiza sensores e informações de condução
-						atualizaSensores();
+						atualizaSensores(edgeAtual, edgeFinal);
 						
 						// Se o status do carro não foi finalizado no "atualizaSensores" ele continua com o processo de obtenção de dados
 						if(this.carStatus.equals("finalizado")) {
@@ -233,7 +236,7 @@ public class Car extends Vehicle implements Runnable {
 							precisaAttExcel = 0;
 
 							if(!verificaRotaTerminada(edgeAtual, edgeFinal)) {
-								edgeAtual = (String) this.sumo.do_job_get(Vehicle.getRoadID(this.idCar)); // TODO: ERRO FORTE AQUI
+								edgeAtual = (String) this.sumo.do_job_get(Vehicle.getRoadID(this.idCar)); // TODO: ERRO FREQUENTE AQUI
 							}
 						}
 					}
@@ -265,7 +268,7 @@ public class Car extends Vehicle implements Runnable {
 		System.out.println(this.idCar + " encerrado.");
 	}
 
-	private void atualizaSensores() {
+	private void atualizaSensores(String edgeAtual, String edgeFinal) {
 		try {
 			if (!this.getSumo().isClosed()) {
 				double[] coordGeo = calculaCoordGeograficas(); // Calcula as coordenadas geográficas atuais.
@@ -301,7 +304,7 @@ public class Car extends Vehicle implements Runnable {
 				this.drivingRepport.add(drivingDataAtual);
 				
 				// Se não está "abastecendo" seta sua velocidade padrão
-				if (carStatus != "abastecendo") {
+				if ((carStatus != "abastecendo") && (!verificaRotaTerminada(edgeAtual, edgeFinal))) {
 					this.setSpeed(speed);
 				}
 
@@ -436,7 +439,7 @@ public class Car extends Vehicle implements Runnable {
 		return (double) this.sumo.do_job_get(Vehicle.getSpeed(this.idCar));
 	}
 
-	public void setSpeed(double speed) throws Exception {
+	public void setSpeed(double speed) throws Exception {           // TODO: ERRO FREQUENTE AQUI
 		this.sumo.do_job_set(Vehicle.setSpeedMode(this.idCar, 27)); // [0 1 1 0 1 1] (binário) ou 27 (decimal)
 		this.sumo.do_job_set(Vehicle.setSpeed(this.idCar, speed));
 	}
