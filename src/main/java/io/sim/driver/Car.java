@@ -25,42 +25,44 @@ import io.sim.company.Rota;
 public class Car extends Vehicle implements Runnable {
 
 	// atributos de cliente
-	private Socket socket;              // Referência para o socket de comunicação com o servidor da empresa.
-	private int companyServerPort;      // Porta do servidor da empresa para a comunicação.
-	private String companyServerHost;   // Host ou endereço do servidor da empresa.
-	private DataInputStream entrada;    // Fluxo de entrada para receber dados do servidor.
-	private DataOutputStream saida;     // Fluxo de saída para enviar dados para o servidor.
+	private Socket socket;              	// Referência para o socket de comunicação com o servidor da empresa.
+	private int companyServerPort;      	// Porta do servidor da empresa para a comunicação.
+	private String companyServerHost;   	// Host ou endereço do servidor da empresa.
+	private DataInputStream entrada;    	// Fluxo de entrada para receber dados do servidor.
+	private DataOutputStream saida;     	// Fluxo de saída para enviar dados para o servidor.
 
 	// atributos da classe
-	private String idCar;               // Identificador exclusivo do carro na simulação.
-	private SumoColor colorCar;         // Cor do carro na simulação.
-	private String driverID;            // Identificador exclusivo do motorista associado ao carro.
-	private SumoTraciConnection sumo;   // Conexão com o simulador SUMO.
-	private boolean on_off;            // Estado ligado/desligado do veículo (true: ligado, false: desligado).
-	private boolean encerrado;         // Indica se o carro terminou seu funcionamento (true: terminado).
-	private long acquisitionRate;       // Taxa de aquisição de dados dos sensores do veículo.
-	private int fuelType;              // Tipo de combustível (1-diesel, 2-gasoline, 3-ethanol, 4-hybrid).
-	private int fuelPreferential;       // Tipo de combustível preferencial.
-	private double fuelPrice;           // Preço do combustível por litro.
-	private int personCapacity;        // Capacidade máxima de passageiros no veículo.
-	private int personNumber;          // Número atual de passageiros no veículo.
-	private double speed;              // Velocidade do veículo.
-	private Rota rota;                 // Rota atual do veículo.
-	private double fuelTank;           // Nível atual do tanque de combustível.
-	private double maxFuelCapacity;    // Capacidade máxima do tanque de combustível.
-	private double consumoCombustivel; // Consumo de combustível.
-	private String carStatus;          // Status atual do veículo.
-	private double latAnt;         	   // Latitude anterior.
-	private double lonAnt;             // Longitude anterior.
-	private double latAtual;           // Latitude atual.
-	private double lonAtual;           // Longitude atual.
-	private DrivingData drivingDataAtual; // Dados de condução atuais do veículo.
+	private String idCar;               	// Identificador exclusivo do carro na simulação.
+	private SumoColor colorCar;         	// Cor do carro na simulação.
+	private String driverID;            	// Identificador exclusivo do motorista associado ao carro.
+	private SumoTraciConnection sumo;   	// Conexão com o simulador SUMO.
+	private boolean on_off;            		// Estado ligado/desligado do veículo (true: ligado, false: desligado).
+	private boolean encerrado;         		// Indica se o carro terminou seu funcionamento (true: terminado).
+	private long acquisitionRate;       	// Taxa de aquisição de dados dos sensores do veículo.
+	private int fuelType;              		// Tipo de combustível (1-diesel, 2-gasoline, 3-ethanol, 4-hybrid).
+	private int fuelPreferential;       	// Tipo de combustível preferencial.
+	private double fuelPrice;           	// Preço do combustível por litro.
+	private int personCapacity;        		// Capacidade máxima de passageiros no veículo.
+	private int personNumber;          		// Número atual de passageiros no veículo.
+	private double speed;              		// Velocidade do veículo.
+	private Rota rota;                 		// Rota atual do veículo.
+	private boolean considerarConsumoComb;
+	private double fuelTank;           		// Nível atual do tanque de combustível.
+	private double maxFuelCapacity;    		// Capacidade máxima do tanque de combustível.
+	private double consumoCombustivel; 		// Consumo de combustível.
+	private String carStatus;          		// Status atual do veículo.
+	private double latAnt;         	   		// Latitude anterior.
+	private double lonAnt;             		// Longitude anterior.
+	private double latAtual;           		// Latitude atual.
+	private double lonAtual;           		// Longitude atual.
+	private int precisaAttExcel;
+	private DrivingData drivingDataAtual; 	// Dados de condução atuais do veículo.
 	private ArrayList<DrivingData> drivingRepport; // Dados de condução registrados.
-	private TransportService ts;      // Serviço de transporte associado ao veículo.
+	private TransportService ts;      		// Serviço de transporte associado ao veículo.
 
 
 	public Car(boolean _on_off, String _idCar, SumoColor _colorCar, String _driverID, SumoTraciConnection _sumo, long _acquisitionRate,
-			int _fuelType, int _fuelPreferential, double _fuelPrice, int _personCapacity, int _personNumber, String _companyServerHost, 
+			int _fuelType, int _fuelPreferential, double _fuelPrice, boolean _considerarConsumoComb, int _personCapacity, int _personNumber, String _companyServerHost, 
 			int _companyServerPort) throws Exception {
 
 		this.companyServerPort = _companyServerPort;
@@ -86,6 +88,7 @@ public class Car extends Vehicle implements Runnable {
 
 		this.encerrado = false;
 		this.fuelPrice = _fuelPrice;
+		this.considerarConsumoComb = _considerarConsumoComb;
 		this.personCapacity = _personCapacity;
 		this.personNumber = _personNumber;
 		this.speed = 30;
@@ -95,8 +98,9 @@ public class Car extends Vehicle implements Runnable {
 		this.maxFuelCapacity = 55000;
 		this.carStatus = "esperando";
 		this.drivingRepport = new ArrayList<DrivingData>();
+		this.precisaAttExcel = 0;
 		
-		this.drivingDataAtual = new DrivingData(idCar, driverID, "esperando", 0, 0, 0, 0, 
+		this.drivingDataAtual = new DrivingData(idCar, driverID, "esperando", 0, 0, 0, 0,  precisaAttExcel,
 												0 , "", 0, 0, 0, this.fuelType, 0);
 	}
 
@@ -104,8 +108,10 @@ public class Car extends Vehicle implements Runnable {
 	public void run() {
 		System.out.println(this.idCar + " iniciando");
 		// Inicializa a Thread responsável por gastar o combustível do carro
-		SpendFuel sf = new SpendFuel(this);
-		sf.start();
+		if (considerarConsumoComb) {
+			SpendFuel sf = new SpendFuel(this);
+			sf.start();
+		}
 
 		try {
 			// Configura a conexão com o servidor da empresa
@@ -157,15 +163,10 @@ public class Car extends Vehicle implements Runnable {
 				// Pega a edge inicial da rota para usar em verificações
 				String edgeAtual = (String) this.sumo.do_job_get(Vehicle.getRoadID(this.idCar));
 				
-				ArrayList<Double> tempos = new ArrayList<Double>();
 				ArrayList<String> edges = Rota.criaListaEdges(rota);
-				
+				System.out.println("A rota " + rota.getID() + " precisa ser dividida em " + edges.size()/2 + " parciais");
 
-				long t0 = System.currentTimeMillis();
-				long tAntigo = t0;
-				int i = 0;
-				double parcial = 0;
-
+				this.precisaAttExcel = 1;
 				boolean initRoute = true;
 				while (this.on_off) {
 					//System.out.println("Car: " + carStatus);
@@ -183,20 +184,16 @@ public class Car extends Vehicle implements Runnable {
 					if(!edges.isEmpty()) {
 						if(edgeAtual.equals(edges.get(0))){
 							edges.remove(0);
-							long ti = System.currentTimeMillis();
-							parcial = (ti - tAntigo);
-							parcial = parcial/1000;
-							tAntigo = ti;
-							System.out.println("Parcial t" + i + ": " + parcial);
-							i++;
-							tempos.add(parcial);
+							edges.remove(0);
+							this.precisaAttExcel = 1;
+							System.out.println("Percorreu mais 2 edges!!");
 						}
 					}
 
 					// Se a Rota terminou 
 					if(verificaRotaTerminada(edgeAtual, edgeFinal)) {
 						System.out.println(this.idCar + " acabou a rota.");
-						//this.ts.setOn_off(false);
+						this.precisaAttExcel = 1;
 						this.carStatus = "finalizado";
 
 						// Manda informações com o status "finalizado"
@@ -233,23 +230,14 @@ public class Car extends Vehicle implements Runnable {
 							saida.write(AESencrypt.encripta(JSONConverter.criaJSONTamanhoBytes(mensagemEncriptada.length)));
 							saida.write(mensagemEncriptada);
 							
+							precisaAttExcel = 0;
+
 							if(!verificaRotaTerminada(edgeAtual, edgeFinal)) {
 								edgeAtual = (String) this.sumo.do_job_get(Vehicle.getRoadID(this.idCar)); // TODO: ERRO FORTE AQUI
 							}
 						}
 					}
 				}
-				long ti = System.currentTimeMillis();
-				parcial = ti - tAntigo;
-				parcial = parcial/1000;
-				tempos .add(parcial);
-				System.out .println("Parcial t" + i + ": " + parcial);
-				double total = ti - t0;
-				total = total/1000;
-				tempos.add(total);
-				System.out .println("Total = " + total);
-				// Relatorio.manipulaExcelRec(tempos); TODO Criar o Relatório no Excel!!
-
 				System.out.println(this.idCar + " off.");
 
 				// Se não está ecerrado o carro está esperando outra rota
@@ -292,7 +280,7 @@ public class Car extends Vehicle implements Runnable {
 				// Atualiza os dados de condução do veículo.
 				drivingDataAtual = new DrivingData(
 						this.idCar, this.driverID, this.carStatus, this.latAnt, this.lonAnt,
-						this.latAtual, this.lonAtual,
+						this.latAtual, this.lonAtual, precisaAttExcel,
 						
 						System.currentTimeMillis(), (String) this.sumo.do_job_get(Vehicle.getRouteID(this.idCar)), 
 						(double) this.sumo.do_job_get(Vehicle.getSpeed(this.idCar)), 

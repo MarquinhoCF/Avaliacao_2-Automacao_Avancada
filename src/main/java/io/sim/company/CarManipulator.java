@@ -53,8 +53,6 @@ public class CarManipulator extends Thread {
                 numBytesMsg = JSONConverter.extraiTamanhoBytes(AESencrypt.decripta(entrada.readNBytes(AESencrypt.getTamNumBytes())));
                 DrivingData comunicacao = JSONConverter.extraiDrivingData(AESencrypt.decripta(entrada.readNBytes(numBytesMsg)));
 
-                company.addComunicacao(comunicacao); // Adiciona a informação na lista de espera para atualização da planilha Excel
-
                 StatusDoCarro = comunicacao.getCarStatus();  // Lê o status do carro
                 //System.out.println("CarManipulator: " + StatusDoCarro);
 
@@ -77,6 +75,10 @@ public class CarManipulator extends Thread {
 
                 // Atualiza as informações recebidas do cliente
                 comunicacao.setDistance(distancia);
+
+                if (comunicacao.getPrecisaAttExcel() == 1) {
+                    company.addComunicacao(comunicacao); // Adiciona a informação na lista de espera para atualização da planilha Excel
+                }
 
                 // Estado "esperando", nesse estado o carro espera receber uma rota do servidor
                 if (StatusDoCarro.equals("esperando")) {

@@ -112,6 +112,7 @@ public class JSONConverter {
         drivingDataJSON.put("Longitude Anterior", drivingData.getLonAnt());
         drivingDataJSON.put("Latitude Atual", drivingData.getLatAtual());
         drivingDataJSON.put("Longitude Atual", drivingData.getLonAtual());
+        drivingDataJSON.put("Precisa Att Excel", drivingData.getPrecisaAttExcel());
         drivingDataJSON.put("TimeStamp", drivingData.getTimeStamp());
         drivingDataJSON.put("RouteIDSUMO", drivingData.getRouteIDSUMO());
         drivingDataJSON.put("Speed", drivingData.getSpeed());
@@ -135,6 +136,7 @@ public class JSONConverter {
         double lonAnt = drivingDataJSONObj.getDouble("Longitude Anterior");
         double latAtual = drivingDataJSONObj.getDouble("Latitude Atual");
         double lonAtual = drivingDataJSONObj.getDouble("Longitude Atual");
+        int precisaAttExcel = drivingDataJSONObj.getInt("Precisa Att Excel");
         long timeStamp = drivingDataJSONObj.getLong("TimeStamp");
         String routeIDSUMO = drivingDataJSONObj.getString("RouteIDSUMO");
         double speed = drivingDataJSONObj.getDouble("Speed");
@@ -143,8 +145,8 @@ public class JSONConverter {
         int fuelType = drivingDataJSONObj.getInt("FuelType");
         double Co2Emission = drivingDataJSONObj.getDouble("Co2Emission");
 
-        DrivingData drivingData = new DrivingData(carID, driverID, carStatus, latAnt, lonAnt, latAtual, lonAtual, timeStamp,
-                                                    routeIDSUMO, speed, distance, fuelConsumption, fuelType, Co2Emission);
+        DrivingData drivingData = new DrivingData(carID, driverID, carStatus, latAnt, lonAnt, latAtual, lonAtual, precisaAttExcel, 
+                                                    timeStamp, routeIDSUMO, speed, distance, fuelConsumption, fuelType, Co2Emission);
 
         return drivingData;
     }

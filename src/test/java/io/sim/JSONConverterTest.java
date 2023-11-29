@@ -58,7 +58,7 @@ public class JSONConverterTest {
     // Testa a criação de JSON para representar dados de direção
     @Test
     public void testCriaJSONDrivingData() {
-        DrivingData drivingData = new DrivingData("Car1", "Driver1", "Status1", 1.0, 2.0, 3.0, 4.0, 12345, "Route1", 60.0, 100.0, 5.0, 1, 2.0);
+        DrivingData drivingData = new DrivingData("Car1", "Driver1", "Status1", 1.0, 2.0, 3.0, 4.0, 1, 12345, "Route1", 60.0, 100.0, 5.0, 1, 2.0);
         String json = JSONConverter.criarJSONDrivingData(drivingData);
         JSONObject jsonObject = new JSONObject(json);
 
@@ -69,6 +69,7 @@ public class JSONConverterTest {
         assertEquals(2.0, jsonObject.getDouble("Longitude Anterior"), 0.001);
         assertEquals(3.0, jsonObject.getDouble("Latitude Atual"), 0.001);
         assertEquals(4.0, jsonObject.getDouble("Longitude Atual"), 0.001);
+        assertEquals(1, jsonObject.getInt("Precisa Att Excel"));
         assertEquals(12345, jsonObject.getLong("TimeStamp"));
         assertEquals("Route1", jsonObject.getString("RouteIDSUMO"));
         assertEquals(60.0, jsonObject.getDouble("Speed"), 0.001);
@@ -81,7 +82,7 @@ public class JSONConverterTest {
     // Testa a extração de dados de direção a partir de um JSON
     @Test
     public void testExtraiDrivingData() {
-        String json = "{\"Car ID\":\"Car1\",\"Driver ID\":\"Driver1\",\"Car Status\":\"Status1\",\"Latitude Anterior\":1.0,\"Longitude Anterior\":2.0,\"Latitude Atual\":3.0,\"Longitude Atual\":4.0,\"TimeStamp\":12345,\"RouteIDSUMO\":\"Route1\",\"Speed\":60.0,\"Distance\":100.0,\"FuelConsumption\":5.0,\"FuelType\":1,\"Co2Emission\":2.0}";
+        String json = "{\"Car ID\":\"Car1\",\"Driver ID\":\"Driver1\",\"Car Status\":\"Status1\",\"Latitude Anterior\":1.0,\"Longitude Anterior\":2.0,\"Latitude Atual\":3.0,\"Longitude Atual\":4.0,\"Precisa Att Excel\":1,\"TimeStamp\":12345,\"RouteIDSUMO\":\"Route1\",\"Speed\":60.0,\"Distance\":100.0,\"FuelConsumption\":5.0,\"FuelType\":1,\"Co2Emission\":2.0}";
         DrivingData extractedDrivingData = JSONConverter.extraiDrivingData(json);
 
         assertEquals("Car1", extractedDrivingData.getCarID());
@@ -91,6 +92,7 @@ public class JSONConverterTest {
         assertEquals(2.0, extractedDrivingData.getLonAnt(), 0.001);
         assertEquals(3.0, extractedDrivingData.getLatAtual(), 0.001);
         assertEquals(4.0, extractedDrivingData.getLonAtual(), 0.001);
+        assertEquals(1, extractedDrivingData.getPrecisaAttExcel(), 0.001);
         assertEquals(12345, extractedDrivingData.getTimeStamp());
         assertEquals("Route1", extractedDrivingData.getRouteIDSUMO());
         assertEquals(60.0, extractedDrivingData.getSpeed(), 0.001);

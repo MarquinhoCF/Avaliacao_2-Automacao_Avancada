@@ -17,6 +17,7 @@ public class DrivingData {
 	private double lonAnt;          // Longitude anterior do veículo
 	private double latAtual;        // Latitude atual do veículo
 	private double lonAtual;        // Longitude atual do veículo
+	private int precisaAttExcel;
 
 	/* SUMO's data */
 
@@ -28,8 +29,8 @@ public class DrivingData {
     private int fuelType;           // Tipo de combustível (1-diesel, 2-gasolina, 3-etanol, 4-híbrido)
     private double co2Emission;     // Emissão de CO2 em mg/s no último passo de tempo
 
-	public DrivingData(String carID, String driverID, String carStatus, double latAnt, double lonAnt, double latAtual,
-		double lonAtual, long timeStamp, String routeIDSUMO, double speed, double distance, double fuelConsumption, int fuelType,
+	public DrivingData(String carID, String driverID, String carStatus, double latAnt, double lonAnt, double latAtual, double lonAtual, 
+		int _precisaAttExcel, long timeStamp, String routeIDSUMO, double speed, double distance, double fuelConsumption, int fuelType,
 		double co2Emission) {
 		
 		this.carID = carID;
@@ -39,6 +40,7 @@ public class DrivingData {
 		this.lonAnt = lonAnt;
 		this.latAtual = latAtual;
 		this.lonAtual = lonAtual;
+		this.precisaAttExcel = _precisaAttExcel;
 
 		this.timeStamp = timeStamp;
 		this.routeIDSUMO = routeIDSUMO;
@@ -78,8 +80,13 @@ public class DrivingData {
 	public double getLatAtual() {
 		return this.latAtual;
 	}
+
 	public double getLonAtual() {
 		return this.lonAtual;
+	}
+
+	public int getPrecisaAttExcel() {
+		return this.precisaAttExcel;
 	}
 
 	/* SUMO's data getters e setters */

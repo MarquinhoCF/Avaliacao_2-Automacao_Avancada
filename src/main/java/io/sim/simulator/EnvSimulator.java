@@ -22,9 +22,9 @@ public class EnvSimulator extends Thread {
 	private static int portaCompany;
 	private static int portaAlphaBank;
 	private static long taxaAquisicao;
-    private static long taxaDeAttSUMO;
 	private static int numDrivers;
     private static int replicacoesRota;
+    private static boolean considerarConsumoComb;
 	private static String rotasXML;
 
     public EnvSimulator() {
@@ -40,10 +40,10 @@ public class EnvSimulator extends Thread {
         portaSUMO = 12345;
         portaCompany = 23415;
         portaAlphaBank = 54321;
-        taxaAquisicao = 100;
-        taxaDeAttSUMO = 100;
+        taxaAquisicao = 10;
         numDrivers = 1;
         replicacoesRota = 10;
+        considerarConsumoComb = true;
         rotasXML = "data/dadosAV2.xml";
     }
 
@@ -58,7 +58,7 @@ public class EnvSimulator extends Thread {
             Thread.sleep(5000);
 
             // Inicia a execução do simulador
-            ExecutaSimulador execSimulador = new ExecutaSimulador(this.sumo, taxaDeAttSUMO);
+            ExecutaSimulador execSimulador = new ExecutaSimulador(this.sumo, taxaAquisicao);
             execSimulador.start();
 
             // Inicia um servidor AlphaBank na porta especificada
@@ -78,7 +78,7 @@ public class EnvSimulator extends Thread {
             company.start();
 
             // Cria e inicia uma lista de drivers
-            ArrayList<Driver> drivers = DriverANDCarCreator.criaListaDrivers(numDrivers, fuelStation, taxaAquisicao, sumo, host, portaCompany, portaAlphaBank);
+            ArrayList<Driver> drivers = DriverANDCarCreator.criaListaDrivers(numDrivers, fuelStation, taxaAquisicao, sumo, host, portaCompany, portaAlphaBank, considerarConsumoComb);
 
             // Cria planilhas de relatórios
             ExcelReport.criaPlanilhas(company, drivers, fuelStation);
