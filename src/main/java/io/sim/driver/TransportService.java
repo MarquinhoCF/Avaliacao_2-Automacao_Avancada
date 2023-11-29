@@ -28,9 +28,9 @@ public class TransportService extends Thread {
 
 	@Override
 	public void run() {
-		System.out.println("Iniciando TransportService - " + this.car.getIdCar());
+		// System.out.println("Iniciando TransportService - " + this.car.getIdCar());
 		this.initializeRoutes();
-		System.out.println(this.car.getIdCar() + " - TS - Rota: " + edge + " adcionada!");
+		// System.out.println(this.car.getIdCar() + " - TS - Rota: " + edge + " adcionada!");
 		//String edgeFinal = edge.get(edge.size()-1);
 		//System.out.println(this.car.getIdCar() + " - TS - Edge final: " + edgeFinal);
 		//System.out.println(this.car.getIdCar() + " - TS - on");
@@ -39,7 +39,7 @@ public class TransportService extends Thread {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		System.out.println("Encerrando TransportService.");
+		// System.out.println("Encerrando TransportService.");
 	}
 
 	private void initializeRoutes() {

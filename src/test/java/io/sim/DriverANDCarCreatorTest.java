@@ -11,6 +11,7 @@ import org.junit.Test;
 import it.polito.appeal.traci.SumoTraciConnection;
 import io.sim.bank.AlphaBank;
 import io.sim.company.Company;
+import io.sim.company.Rota;
 import io.sim.driver.Car;
 import io.sim.driver.Driver;
 import io.sim.fuelStation.FuelStation;
@@ -62,8 +63,9 @@ public class DriverANDCarCreatorTest {
             fuelStation.start();
 
             // Inicia um servidor Company na porta especificada
+            ArrayList<Rota> rotasDisp = Rota.criaRotasXML(rotasXML);
             ServerSocket companyServer = new ServerSocket(portaCompany);
-            Company company = new Company(companyServer, rotasXML, numDrivers, portaAlphaBank, host);
+            Company company = new Company(companyServer, rotasDisp, numDrivers, portaAlphaBank, host);
             company.start();
         } catch (IOException e1) {
             e1.printStackTrace();

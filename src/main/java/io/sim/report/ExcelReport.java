@@ -56,12 +56,12 @@ public class ExcelReport {
         headerRow.createCell(1).setCellValue("ID Car");
         headerRow.createCell(2).setCellValue("ID Route");
         headerRow.createCell(3).setCellValue("Speed");
-        headerRow.createCell(4).setCellValue("Distance");
-        headerRow.createCell(5).setCellValue("FuelConsumption");
-        headerRow.createCell(6).setCellValue("FuelType");
-        headerRow.createCell(7).setCellValue("CO2Emission");
-        headerRow.createCell(8).setCellValue("Longitude (Lon)");
-        headerRow.createCell(9).setCellValue("Latitude (Lat)");
+        headerRow.createCell(4).setCellValue("FuelConsumption");
+        headerRow.createCell(5).setCellValue("FuelType");
+        headerRow.createCell(6).setCellValue("CO2Emission");
+        headerRow.createCell(7).setCellValue("Longitude (Lon)");
+        headerRow.createCell(8).setCellValue("Latitude (Lat)");
+        headerRow.createCell(9).setCellValue("Distance");
     }
 
     // Método para atualizar a planilha de carros com novos dados
@@ -81,12 +81,12 @@ public class ExcelReport {
                 newRow.createCell(1).setCellValue(carReport.getCarID());
                 newRow.createCell(2).setCellValue(carReport.getRouteIDSUMO());
                 newRow.createCell(3).setCellValue(carReport.getSpeed());
-                newRow.createCell(4).setCellValue(carReport.getDistance()); 
-                newRow.createCell(5).setCellValue(carReport.getFuelConsumption());
-                newRow.createCell(6).setCellValue(carReport.getFuelType());
-                newRow.createCell(7).setCellValue(carReport.getCo2Emission());
-                newRow.createCell(8).setCellValue(carReport.getLonAtual());
-                newRow.createCell(9).setCellValue(carReport.getLatAtual());
+                newRow.createCell(4).setCellValue(carReport.getFuelConsumption());
+                newRow.createCell(5).setCellValue(carReport.getFuelType());
+                newRow.createCell(6).setCellValue(carReport.getCo2Emission());
+                newRow.createCell(7).setCellValue(carReport.getLonAtual());
+                newRow.createCell(8).setCellValue(carReport.getLatAtual());
+                newRow.createCell(9).setCellValue(carReport.getDistance()); 
                 
                 // Salva as alterações na planilha
                 workbook.write(outputStream);

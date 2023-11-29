@@ -9,6 +9,7 @@ import io.sim.fuelStation.FuelStation;
 import io.sim.report.ExcelReport;
 import io.sim.bank.AlphaBank;
 import io.sim.company.Company;
+import io.sim.company.Rota;
 import it.polito.appeal.traci.SumoTraciConnection;
 
 /**
@@ -21,7 +22,9 @@ public class EnvSimulator extends Thread {
 	private static int portaCompany;
 	private static int portaAlphaBank;
 	private static long taxaAquisicao;
+    private static long taxaDeAttSUMO;
 	private static int numDrivers;
+    private static int replicacoesRota;
 	private static String rotasXML;
 
     public EnvSimulator() {
@@ -38,7 +41,9 @@ public class EnvSimulator extends Thread {
         portaCompany = 23415;
         portaAlphaBank = 54321;
         taxaAquisicao = 100;
+        taxaDeAttSUMO = 10;
         numDrivers = 1;
+        replicacoesRota = 10;
         rotasXML = "data/dadosAV2.xml";
     }
 
@@ -53,7 +58,7 @@ public class EnvSimulator extends Thread {
             Thread.sleep(5000);
 
             // Inicia a execução do simulador
-            ExecutaSimulador execSimulador = new ExecutaSimulador(this.sumo, taxaAquisicao);
+            ExecutaSimulador execSimulador = new ExecutaSimulador(this.sumo, taxaDeAttSUMO);
             execSimulador.start();
 
             // Inicia um servidor AlphaBank na porta especificada
@@ -67,8 +72,9 @@ public class EnvSimulator extends Thread {
             fuelStation.start();
 
             // Inicia um servidor Company na porta especificada
+            ArrayList<Rota> rotasDisp = Rota.criaArrayRotaAV2(rotasXML, replicacoesRota);
             ServerSocket companyServer = new ServerSocket(portaCompany);
-            Company company = new Company(companyServer, rotasXML, numDrivers, portaAlphaBank, host);
+            Company company = new Company(companyServer, rotasDisp, numDrivers, portaAlphaBank, host);
             company.start();
 
             // Cria e inicia uma lista de drivers
@@ -91,6 +97,7 @@ public class EnvSimulator extends Thread {
 
             // Encerra o servidor Company
             execSimulador.setFuncionando(false);
+            execSimulador.join();
             companyServer.close();
             alphaBankServer.close();
         } catch (IOException e1) {

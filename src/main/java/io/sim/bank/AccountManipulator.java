@@ -82,7 +82,7 @@ public class AccountManipulator extends Thread {
                 } else {
                     System.out.println("AB - Login mal sucedido, verifique o ID e a senha: " + login[0]);
                 }
-                System.out.println("Account Manipulator encerrado...");
+                // System.out.println("Account Manipulator encerrado...");
             } 
         } catch (IOException ex) {
             ex.printStackTrace();

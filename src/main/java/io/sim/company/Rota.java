@@ -97,7 +97,7 @@ public class Rota {
                     Element firstRouteElement = (Element) routeList.item(0);
                     String edges = firstRouteElement.getAttribute("edges");
     
-                    // Replicar a rota 100 vezes
+                    // Replicar a rota n vezes
                     for (int i = 0; i < replicacoes; i++) {
                         Rota route = new Rota(idRouteAux + "_" + i, edges);
                         routes.add(route);

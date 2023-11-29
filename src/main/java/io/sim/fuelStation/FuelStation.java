@@ -47,9 +47,10 @@ public class FuelStation extends Thread {
             account.start(); // Inicia a conta para processar transações
             System.out.println("Fuel Station se conectou ao Servido do AlphaBank!!");
 
+            Thread.sleep(5000);
             // Aguarda até que não haja mais rotas estejam 
             while (Company.temRotasDisponiveis()) {
-                Thread.sleep(15000);
+                Thread.sleep(10000);
             }
             System.out.println("Encerrando a Fuel Station...");
             EndAccount endAccount = new EndAccount(socket, account);

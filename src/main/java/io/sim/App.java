@@ -14,6 +14,14 @@ public class App {
         ev.start();
         ev.join();
         
+        try {
+            // Executa um passo de simulação no SUMO
+            Thread.sleep(1000);
+            // Aguarda um determinado tempo (taxa de aquisição) antes de continuar
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         System.out.println("Encerando APP!");
+        System.exit(0);
     }
 }

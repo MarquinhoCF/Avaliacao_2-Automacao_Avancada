@@ -76,7 +76,7 @@ public class CarManipulator extends Thread {
                 }
 
                 // Atualiza as informações recebidas do cliente
-                comunicacao.setDistance(distanciaPercorrida / 1000);
+                comunicacao.setDistance(distancia);
 
                 // Estado "esperando", nesse estado o carro espera receber uma rota do servidor
                 if (StatusDoCarro.equals("esperando")) {

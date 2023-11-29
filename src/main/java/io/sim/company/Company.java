@@ -37,7 +37,7 @@ public class Company extends Thread {
     private int alphaBankServerPort;
     private String alphaBankServerHost; 
     
-    public Company(ServerSocket serverSocket, String xmlPath, int _numDrivers, int _alphaBankServerPort, String _alphaBankServerHost) {
+    public Company(ServerSocket serverSocket, ArrayList<Rota> _rotasDisp, int _numDrivers, int _alphaBankServerPort, String _alphaBankServerHost) {
         // Inicializa servidor
         this.serverSocket = serverSocket;
 
@@ -47,7 +47,7 @@ public class Company extends Thread {
         this.canectandoCars = true;
 
         // Atributos da classe
-        rotasDisp = Rota.criaArrayRotaAV2(xmlPath, 100);
+        rotasDisp = _rotasDisp;
 		System.out.println("Rotas: "+ rotasDisp.size()+" rotas disponiveis");
         rotasEmExec = new ArrayList<Rota>();
         rotasTerminadas = new ArrayList<Rota>();
@@ -82,9 +82,8 @@ public class Company extends Thread {
                     }
                 }
 
-                // Verifica se ainda tem roas disponíveis
+                // Verifica se ainda tem rotas disponíveis
                 if(rotasDisp.size() == 0 && rotasEmExec.size() == 0) {
-                    System.out.println("Rotas terminadas");
                     rotasDisponiveis = false;
                 }
 
@@ -161,11 +160,13 @@ public class Company extends Thread {
                 if (rotasDisp.size() != 0) {
                     Rota rota = rotasDisp.remove(0);
                     rotasEmExec.add(rota);
+                    System.out.println("Rotas a serem executadas: " + rotasDisp.size());
                     return rota;
                 }
                 Rota rota = new Rota("-1", "00000 00000 00000");
                 return rota;
             } else {
+                System.out.println("Rotas terminadas");
                 Rota rota = new Rota("-1", "00000 00000 00000");
                 return rota;
             }

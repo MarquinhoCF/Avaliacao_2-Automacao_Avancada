@@ -210,8 +210,10 @@ public class Car extends Vehicle implements Runnable {
 							mensagemEncriptada = AESencrypt.encripta(JSONConverter.criarJSONDrivingData(drivingDataAtual));
 							saida.write(AESencrypt.encripta(JSONConverter.criaJSONTamanhoBytes(mensagemEncriptada.length)));
 							saida.write(mensagemEncriptada);
-
-							edgeAtual = (String) this.sumo.do_job_get(Vehicle.getRoadID(this.idCar));
+							
+							if(!verificaRotaTerminada(edgeAtual, edgeFinal)) {
+								edgeAtual = (String) this.sumo.do_job_get(Vehicle.getRoadID(this.idCar)); // TODO: ERRO FORTE AQUI
+							}
 						}
 					}
 				}

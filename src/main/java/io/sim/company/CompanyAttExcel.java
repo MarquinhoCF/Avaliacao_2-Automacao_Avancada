@@ -20,7 +20,7 @@ public class CompanyAttExcel extends Thread {
         try {
             // Loop principal que verifica a disponibilidade de rotas
             while (funcionando) {
-                Thread.sleep(10); // Aguarda por um curto período (10 milissegundos) para evitar uso intensivo da CPU
+                Thread.sleep(5); // Aguarda por um curto período (10 milissegundos) para evitar uso intensivo da CPU
                 if (company.temReport()) {
                     // Se a instância da classe Company possui relatórios para serem atualizados
                     ExcelReport.atualizaPlanilhaCar(company.pegaComunicacao());  // Atualiza o relatório no Excel
