@@ -72,13 +72,13 @@ public class Driver extends Thread {
 
                 // Verifica o status do veículo
                 if(car.getCarStatus() == "finalizado") {
-                    System.out.println(this.driverID + " rota " + rotaAtual.getID() + " finalizada");
+                    // System.out.println(this.driverID + " rota " + rotaAtual.getID() + " finalizada");
                     rotasTerminadas.add(rotaAtual);
                     initRoute = false;
                 } else if((this.car.getCarStatus() == "rodando") && !initRoute) {
                     rotasDisp.add(this.car.getRota());
                     rotaAtual = rotasDisp.remove(0);
-                    System.out.println(this.driverID + " rota "+ rotaAtual.getID() +" iniciada");
+                    // System.out.println(this.driverID + " rota "+ rotaAtual.getID() +" iniciada");
                     initRoute = true;
                 }
 

@@ -138,7 +138,7 @@ public class Car extends Vehicle implements Runnable {
 					break;
 				}
 
-				System.out.println(this.idCar + " leu " + rota.getID());
+				System.out.println("------------> " + this.idCar + " está iniciando a rota: " + rota.getID());
 
 				// Cria um novo transport Service que criará o Carro no SUMO
 				ts = new TransportService(true, this.idCar, rota, this, this.sumo);
@@ -156,6 +156,15 @@ public class Car extends Vehicle implements Runnable {
 
 				// Pega a edge inicial da rota para usar em verificações
 				String edgeAtual = (String) this.sumo.do_job_get(Vehicle.getRoadID(this.idCar));
+				
+				ArrayList<Double> tempos = new ArrayList<Double>();
+				ArrayList<String> edges = Rota.criaListaEdges(rota);
+				
+
+				long t0 = System.currentTimeMillis();
+				long tAntigo = t0;
+				int i = 0;
+				double parcial = 0;
 
 				boolean initRoute = true;
 				while (this.on_off) {
@@ -169,6 +178,19 @@ public class Car extends Vehicle implements Runnable {
 						latAnt = coordGeo[0];
 						lonAnt = coordGeo[1];
 						initRoute = false; // Só executa uma vez por rota
+					}
+
+					if(!edges.isEmpty()) {
+						if(edgeAtual.equals(edges.get(0))){
+							edges.remove(0);
+							long ti = System.currentTimeMillis();
+							parcial = (ti - tAntigo);
+							parcial = parcial/1000;
+							tAntigo = ti;
+							System.out.println("Parcial t" + i + ": " + parcial);
+							i++;
+							tempos.add(parcial);
+						}
 					}
 
 					// Se a Rota terminou 
@@ -217,6 +239,17 @@ public class Car extends Vehicle implements Runnable {
 						}
 					}
 				}
+				long ti = System.currentTimeMillis();
+				parcial = ti - tAntigo;
+				parcial = parcial/1000;
+				tempos .add(parcial);
+				System.out .println("Parcial t" + i + ": " + parcial);
+				double total = ti - t0;
+				total = total/1000;
+				tempos.add(total);
+				System.out .println("Total = " + total);
+				// Relatorio.manipulaExcelRec(tempos); TODO Criar o Relatório no Excel!!
+
 				System.out.println(this.idCar + " off.");
 
 				// Se não está ecerrado o carro está esperando outra rota

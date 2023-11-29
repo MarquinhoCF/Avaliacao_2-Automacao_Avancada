@@ -110,5 +110,14 @@ public class Rota {
     
         return routes;
     }
+
+    public static ArrayList<String> criaListaEdges(Rota rota) {
+        String grandeString = rota.getEdges();
+        ArrayList<String> edges = new ArrayList<String>();
+        for(String e : grandeString.split(" ")) {
+			edges.add(e);
+		}
+        return edges;
+    }
     
 }
