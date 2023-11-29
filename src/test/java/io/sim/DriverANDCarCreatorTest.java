@@ -9,14 +9,14 @@ import java.util.ArrayList;
 import org.junit.Before;
 import org.junit.Test;
 import it.polito.appeal.traci.SumoTraciConnection;
-import io.sim.bank.AlphaBank;
-import io.sim.company.Company;
-import io.sim.company.Rota;
-import io.sim.driver.Car;
-import io.sim.driver.Driver;
-import io.sim.fuelStation.FuelStation;
-import io.sim.simulator.DriverANDCarCreator;
-import io.sim.simulator.ExecutaSimulador;
+import io.sim.simulator.bank.AlphaBank;
+import io.sim.simulator.company.Company;
+import io.sim.simulator.company.Rota;
+import io.sim.simulator.driver.Car;
+import io.sim.simulator.driver.Driver;
+import io.sim.simulator.fuelStation.FuelStation;
+import io.sim.simulator.simulation.DriverANDCarCreator;
+import io.sim.simulator.simulation.ExecutaSimulador;
 
 public class DriverANDCarCreatorTest {
     // Configuração inicial do ambiente e conexão com o SUMO

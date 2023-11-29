@@ -4,8 +4,8 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import io.sim.bank.Account;
-import io.sim.bank.AlphaBank;
+import io.sim.simulator.bank.Account;
+import io.sim.simulator.bank.AlphaBank;
 
 import java.io.IOException;
 import java.net.ServerSocket;

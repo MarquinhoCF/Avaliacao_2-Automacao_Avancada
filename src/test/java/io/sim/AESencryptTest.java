@@ -3,7 +3,7 @@ package io.sim;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-import io.sim.comunication.AESencrypt;
+import io.sim.simulator.comunication.AESencrypt;
 
 public class AESencryptTest {
 

@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import io.sim.fuelStation.FuelStation;
+import io.sim.simulator.fuelStation.FuelStation;
 
 public class FuelStationTest {
     private FuelStation fuelStation;

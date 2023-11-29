@@ -1,7 +1,7 @@
 package io.sim;
 
 import io.sim.reconciliation.Rec;
-import io.sim.simulator.EnvSimulator;
+import io.sim.simulator.simulation.EnvSimulator;
 
 /**
  * Classe que inicia toda a aplicação
@@ -15,17 +15,16 @@ public class App {
         ev.start();
         ev.join();
         
-        Rec rec = new Rec();
-        rec.start();
-        rec.join();
-
         try {
-            // Executa um passo de simulação no SUMO
-            Thread.sleep(1000);
-            // Aguarda um determinado tempo (taxa de aquisição) antes de continuar
+            Thread.sleep(5000);
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        // Rec rec = new Rec();
+        // rec.start();
+        // rec.join();
+
         System.out.println("Encerando APP!");
         System.exit(0);
     }

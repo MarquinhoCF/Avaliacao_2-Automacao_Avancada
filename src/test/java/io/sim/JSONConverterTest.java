@@ -3,10 +3,11 @@ package io.sim;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-import io.sim.comunication.JSONConverter;
-import io.sim.company.Rota;
-import io.sim.driver.DrivingData;
-import io.sim.bank.TransferData;
+import io.sim.simulator.bank.TransferData;
+import io.sim.simulator.company.Rota;
+import io.sim.simulator.comunication.JSONConverter;
+import io.sim.simulator.driver.DrivingData;
+
 import org.json.JSONObject;
 
 public class JSONConverterTest {
