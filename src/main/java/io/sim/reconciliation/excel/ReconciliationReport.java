@@ -90,31 +90,6 @@ public class ReconciliationReport {
         }
     }
 
-    // Lê os dados de uma coluna específica e retorna como ArrayList<Double>
-    public static ArrayList<Double> lerColunaTimeDistance(int coluna) {
-        ArrayList<Double> valores = new ArrayList<>();
-
-        try (Workbook workbook = WorkbookFactory.create(new FileInputStream(fileName))) {
-            Sheet sheet = workbook.getSheetAt(0); // Obtém a primeira sheet
-
-            // Itera sobre as linhas da sheet, começando da segunda linha (índice 1)
-            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
-                Row row = sheet.getRow(i);
-                if (row != null) {
-                    Cell cell = row.getCell(coluna);
-                    if (cell != null && cell.getCellType() == CellType.NUMERIC) {
-                        double valor = cell.getNumericCellValue();
-                        valores.add(valor);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return valores;
-    }
-
     // Adiciona uma nova sheet com o cabeçalho especificado
     public static void adicionaSheetEstatisticas(int numeroParticoes) {
         try (Workbook workbook = WorkbookFactory.create(new FileInputStream(fileName))) {
@@ -142,16 +117,18 @@ public class ReconciliationReport {
         headerRow.createCell(0).setCellValue("Tempos");
         headerRow.createCell(1).setCellValue("Médias");
         headerRow.createCell(2).setCellValue("Desvio Padrão");
-        headerRow.createCell(3).setCellValue("Polarização (bias)");
-        headerRow.createCell(4).setCellValue("Precisão");
-        headerRow.createCell(5).setCellValue("Incerteza");
+        headerRow.createCell(3).setCellValue("Reconciliado");
+        headerRow.createCell(4).setCellValue("Polarização (bias)");
+        headerRow.createCell(5).setCellValue("Precisão");
+        headerRow.createCell(6).setCellValue("Incerteza");
 
         headerRow.createCell(9).setCellValue("Distâncias");
         headerRow.createCell(10).setCellValue("Médias");
         headerRow.createCell(11).setCellValue("Desvio Padrão");
-        headerRow.createCell(12).setCellValue("Polarização (bias)");
-        headerRow.createCell(13).setCellValue("Precisão");
-        headerRow.createCell(14).setCellValue("Incerteza");
+        headerRow.createCell(12).setCellValue("Reconciliado");
+        headerRow.createCell(13).setCellValue("Polarização (bias)");
+        headerRow.createCell(14).setCellValue("Precisão");
+        headerRow.createCell(15).setCellValue("Incerteza");
 
         for (int i = 1; i <= (numeroParticoes - 1); i++) {
             Row row = sheet.createRow(i);
@@ -188,6 +165,31 @@ public class ReconciliationReport {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    // Lê os dados de uma coluna específica e retorna como ArrayList<Double>
+    public static ArrayList<Double> lerColunaReconciliation(int numSheet, int coluna) {
+        ArrayList<Double> valores = new ArrayList<>();
+
+        try (Workbook workbook = WorkbookFactory.create(new FileInputStream(fileName))) {
+            Sheet sheet = workbook.getSheetAt(numSheet); // Obtém a primeira sheet
+
+            // Itera sobre as linhas da sheet, começando da segunda linha (índice 1)
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+                Row row = sheet.getRow(i);
+                if (row != null) {
+                    Cell cell = row.getCell(coluna);
+                    if (cell != null && cell.getCellType() == CellType.NUMERIC) {
+                        double valor = cell.getNumericCellValue();
+                        valores.add(valor);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return valores;
     }
 
 }

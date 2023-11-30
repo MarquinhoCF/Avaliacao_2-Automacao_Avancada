@@ -3,6 +3,7 @@ package io.sim.reconciliation;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -31,8 +32,7 @@ public class Rec extends Thread {
 
 	public static void main(String args[]) {
 		try {
-			System.out.println("\n\n");
-			System.out.println("======== Preparando os dados para a Realização da Reconciliação de Dados ========");
+			System.out.println("\n\n======== Preparando os dados para a Realização da Reconciliação de Dados ========");
 			
 			int numeroParticoes = calculaNumeroParticoes("data/dadosAV2.xml");
 
@@ -62,14 +62,20 @@ public class Rec extends Thread {
 			ArrayList<ArrayList<Double>> todosOsT = new ArrayList<>();
 			ArrayList<ArrayList<Double>> todosOsD = new ArrayList<>();
 			for (int i = 0; i < numeroParticoes; i++) {
-				todosOsT.add(ReconciliationReport.lerColunaTimeDistance(i*2));
-				todosOsD.add(ReconciliationReport.lerColunaTimeDistance((i*2) + 1));
+				todosOsT.add(ReconciliationReport.lerColunaReconciliation(0, i*2));
+				todosOsD.add(ReconciliationReport.lerColunaReconciliation(0, (i*2) + 1));
 			}
 
-			System.out.println("\nCalculando as estatísticas...");
+			System.out.println("\nCalculando a média e desvio padrão...");
 			ReconciliationReport.adicionaSheetEstatisticas(numeroParticoes);
-			calcularEstatisticas(numeroParticoes, todosOsT, todosOsD);
+			calcularEstatisticas1(numeroParticoes, todosOsT, todosOsD);
 
+			System.out.println("\nFazendo a Reconciliação de Dados para os tempos e distâncias...");
+			preparaReconciliacao();
+
+			System.out.println("\nCalculando as estatísticas...");
+			calcularEstatisticas2(numeroParticoes);
+			
 			System.out.println("\n\nPlotando os gráficos de dispersão...");
 			Grafico.plotarGraficosDispersoes(todosOsT, todosOsD);
 
@@ -150,7 +156,7 @@ public class Rec extends Thread {
 		}
 	}
 
-	private static void calcularEstatisticas(int numeroParticoes, ArrayList<ArrayList<Double>> todosOsT, ArrayList<ArrayList<Double>> todosOsD) {
+	private static void calcularEstatisticas1(int numeroParticoes, ArrayList<ArrayList<Double>> todosOsT, ArrayList<ArrayList<Double>> todosOsD) {
 		// Calculando as médias
 		ArrayList<Double> mediaT = new ArrayList<>();
 		ArrayList<Double> mediaD = new ArrayList<>();
@@ -197,40 +203,73 @@ public class Rec extends Thread {
 	
 		ReconciliationReport.escreverDadosColunaEstatisticas(2, desvioPadraoT);
 		ReconciliationReport.escreverDadosColunaEstatisticas(11, desvioPadraoD);
-
-		// Calculando a polarização (bias)
-		ArrayList<Double> polarizacaoT = new ArrayList<>();
-		ArrayList<Double> polarizacaoD = new ArrayList<>();
-		for (int i = 0; i < numeroParticoes; i++) {
-			double polarizacaoAtualT = mediaT.get(i) / desvioPadraoT.get(i);
-			polarizacaoT.add(polarizacaoAtualT);
-	
-			double polarizacaoAtualD = mediaD.get(i) / desvioPadraoD.get(i);
-			polarizacaoD.add(polarizacaoAtualD);
-		}
-	
-		ReconciliationReport.escreverDadosColunaEstatisticas(3, polarizacaoT);
-		ReconciliationReport.escreverDadosColunaEstatisticas(12, polarizacaoD);
 	}
 
-    private static void reconcilializacaoDados() {
+    private static void preparaReconciliacao() {
+		// Fazendo a Reconciliação para os tempos:
+		ArrayList<Double> mediasT = ReconciliationReport.lerColunaReconciliation(1, 1);
+		ArrayList<Double> desvioPadraoT = ReconciliationReport.lerColunaReconciliation(1, 2);
+		double[] Treconciliado = reconciliacao(mediasT, desvioPadraoT);
+		ArrayList<Double> Trec = new ArrayList<>();
+		for (double t : Treconciliado) {
+			Trec.add(t);
+		}
+		Trec.remove(Trec.size() - 1); // Remove o lixo que ficou acumulado no vetor para que ele não seja escrito no Excel
+		ReconciliationReport.escreverDadosColunaEstatisticas(3, Trec);
+		
+		ArrayList<Double> mediasD = ReconciliationReport.lerColunaReconciliation(1, 10);
+		ArrayList<Double> desvioPadraoD = ReconciliationReport.lerColunaReconciliation(1, 11);
+		double[] Dreconciliado = reconciliacao(mediasD, desvioPadraoD);
+		ArrayList<Double> Drec = new ArrayList<>();
+		for (double d : Dreconciliado) {
+			Drec.add(d);
+		}
+		Drec.remove(Drec.size() - 1); // Remove o lixo que ficou acumulado no vetor para que ele não seja escrito no Excel
+		ReconciliationReport.escreverDadosColunaEstatisticas(12, Drec);
+	}
 
-		//   F1    F3     F5     F6
-		// =====>O=====>O=====>O=====>
-		//     v |             | ^
-		//       |  F2     F4  |
-		//       ======>O======>
+	private static double[] reconciliacao(ArrayList<Double> medias, ArrayList<Double> desvioPadrao) {
+		int tam = medias.size();
+		double[] y = new double[tam];
+		for (int i = 0; i < tam; i++) {
+			y[i] = medias.get(i);
+		}
 
-		double[] y = new double[] { 110.5, 60.8, 35.0, 68.9, 38.6, 101.4 };
+		double[] v = new double[tam];
+		for (int i = 0; i < tam; i++) {
+			v[i] = Math.pow(desvioPadrao.get(i),2);
+		}
 
-		double[] v = new double[] { 0.6724, 0.2809, 0.2116, 0.5041, 0.2025, 1.44 };
+		double[] A = new double[tam];
 
-		double[][] A = new double[][] { { 1, -1, -1, 0, 0, 0 }, { 0, 1, 0, -1, 0, 0 }, { 0, 0, 1, 0, -1, 0 },
-				{ 0, 0, 0, 1, 1, -1 } };
+        // Preenche o vetor com 1
+        Arrays.fill(A, 1);
+
+        // Define o último elemento como -1
+        A[tam - 1] = -1;
 
 		Reconciliation rec = new Reconciliation(y, v, A);
-		System.out.println("Y_hat:");
-		rec.printMatrix(rec.getReconciledFlow());
+		return rec.getReconciledFlow();
+	}
+
+	private static void calcularEstatisticas2(int numeroParticoes) {
+		// Obtendo os dados de Statistics
+		ArrayList<Double> mediaT = ReconciliationReport.lerColunaReconciliation(1, 1);
+		ArrayList<Double> mediaD = ReconciliationReport.lerColunaReconciliation(1, 10);
+		ArrayList<Double> desvioPadraoT = ReconciliationReport.lerColunaReconciliation(1, 2);
+		ArrayList<Double> desvioPadraoD = ReconciliationReport.lerColunaReconciliation(1, 11);
+		ArrayList<Double> Treconciliado = ReconciliationReport.lerColunaReconciliation(1, 3);
+		ArrayList<Double> Dreconciliado = ReconciliationReport.lerColunaReconciliation(1, 12);
+
+		// Calculando a Polarização (bias);
+		ArrayList<Double> biasT = new ArrayList<>();
+		ArrayList<Double> biasD = new ArrayList<>();
+		for (int i = 0; i < numeroParticoes; i++) {
+			biasT.add(Treconciliado.get(i) - mediaT.get(i));
+			biasD.add(Dreconciliado.get(i) - mediaD.get(i));
+		}
+		ReconciliationReport.escreverDadosColunaEstatisticas(4, biasT);
+		ReconciliationReport.escreverDadosColunaEstatisticas(13, biasD);
 	}
 
 }
