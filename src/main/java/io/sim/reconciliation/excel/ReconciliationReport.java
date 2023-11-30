@@ -44,8 +44,9 @@ public class ReconciliationReport {
             headerRow.createCell(i * 2).setCellValue("t" + (i + 1));
             headerRow.createCell(i * 2 + 1).setCellValue("d" + (i + 1));
         }
-        headerRow.createCell(36).setCellValue("tTOTAL");
-        headerRow.createCell(37).setCellValue("dTOTAL");
+
+        headerRow.createCell((numeroParticoes - 1)*2).setCellValue("tTOTAL");
+        headerRow.createCell((numeroParticoes - 1)*2 + 1).setCellValue("dTOTAL");
     }
 
 
@@ -90,12 +91,12 @@ public class ReconciliationReport {
     }
 
     // Adiciona uma nova sheet com o cabeçalho especificado
-    public static void adicionaSheetEstatisticas() {
+    public static void adicionaSheetEstatisticas(int numeroParticoes) {
         try (Workbook workbook = WorkbookFactory.create(new FileInputStream(fileName))) {
             Sheet sheet = workbook.createSheet("Statistics"); // Cria uma nova sheet
 
             // Cria o cabeçalho da planilha de estatísticas
-            criaCabecalhoEstatisticas(sheet);
+            criaCabecalhoEstatisticas(sheet, numeroParticoes);
 
             // Salva as alterações na planilha
             try (FileOutputStream outputStream = new FileOutputStream(fileName)) {
@@ -109,7 +110,7 @@ public class ReconciliationReport {
     }
 
     // Cria o cabeçalho da planilha de estatísticas
-    private static void criaCabecalhoEstatisticas(Sheet sheet) {
+    private static void criaCabecalhoEstatisticas(Sheet sheet, int numeroParticoes) {
         Row headerRow = sheet.createRow(0);
 
         // Define os cabeçalhos das colunas
@@ -125,11 +126,14 @@ public class ReconciliationReport {
         headerRow.createCell(13).setCellValue("Precisão");
         headerRow.createCell(14).setCellValue("Incerteza");
 
-        for (int i = 1; i <= 18; i++) {
+        for (int i = 1; i <= (numeroParticoes - 1); i++) {
             Row row = sheet.createRow(i);
             row.createCell(0).setCellValue("t" + i);
             row.createCell(9).setCellValue("d" + i);
         }
+        Row row = sheet.createRow(numeroParticoes);
+        row.createCell(0).setCellValue("tTOTAL");
+        row.createCell(9).setCellValue("dTOTAL");
     }
 
     // Lê os dados de uma coluna específica e retorna como ArrayList<Double>

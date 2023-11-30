@@ -40,9 +40,9 @@ public class EnvSimulator extends Thread {
         portaSUMO = 12345;
         portaCompany = 23415;
         portaAlphaBank = 54321;
-        taxaAquisicao = 10;
+        taxaAquisicao = 20;
         numDrivers = 1;
-        replicacoesRota = 10;
+        replicacoesRota = 100;
         considerarConsumoComb = true;
         rotasXML = "data/dadosAV2.xml";
     }

@@ -111,7 +111,6 @@ public class CarManipulator extends Thread {
                     String routeID = comunicacao.getRouteIDSUMO();
                     System.out.println("SMC - Rota " + routeID + " finalizada.");
                     company.terminarRota(routeID); // A partir do ID da rota chama-se o método que passa as rotas das lista em execução pra lista de terminadas
-                    distancia = 0; // Reseta-se a distância percorrida
                 
                 // Estado "rodando", indica que o carro está cumprindo uma rota
                 } else if (StatusDoCarro.equals("rodando")) {

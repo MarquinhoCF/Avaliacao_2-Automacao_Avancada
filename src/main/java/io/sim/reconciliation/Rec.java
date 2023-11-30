@@ -18,8 +18,8 @@ import io.sim.reconciliation.excel.ReconciliationReport;
 
 public class Rec extends Thread {
 
-	private static int numeroRepeticoes = 10;
-	private static long taxaAquisicao = 10;
+	private static int numeroRepeticoes = 100;
+	private static long taxaAquisicao = 20;
 
 	public Rec() {
 
@@ -46,16 +46,18 @@ public class Rec extends Thread {
             LeitorRelatorioCarros.lerExcel(filePath, timeStamps, distancias);
 
             // Imprimir os vetores
-			System.out.println("\nLendo os valores de RelatorioCarros.xlsx");
-            System.out.println("TimeStamps: " + timeStamps);
-            System.out.println("Distances: " + distancias);
+			System.out.println("\nLendo os valores de RelatorioCarros.xlsx\n");
+            System.out.println("TimeStamps: " + timeStamps + "\n");
+            System.out.println("Distances: " + distancias + "\n");
 
 			System.out.println("\n\nLeitura realizada!!");
 
 			System.out.println("\n\nCriando planilha ReconciliationReport.xlsx");
 			ReconciliationReport.criaReconciliationReport(numeroParticoes);
+			System.out.println("\nCalculando as parciais...");
 			calcularParciais(numeroParticoes, timeStamps, distancias);
-			ReconciliationReport.adicionaSheetEstatisticas();
+			System.out.println("\nCalculando as estatísticas...");
+			ReconciliationReport.adicionaSheetEstatisticas(numeroParticoes);
 			calcularEstatisticas(numeroParticoes);
 
         } catch (IOException e) {
@@ -139,7 +141,7 @@ public class Rec extends Thread {
 		// Obtendo os dados
 		ArrayList<ArrayList<Double>> todosOsT = new ArrayList<>();
 		ArrayList<ArrayList<Double>> todosOsD = new ArrayList<>();
-		for (int i = 0; i < (numeroParticoes - 1); i++) {
+		for (int i = 0; i < numeroParticoes; i++) {
 			todosOsT.add(ReconciliationReport.lerColuna(i*2));
 			todosOsD.add(ReconciliationReport.lerColuna((i*2) + 1));
 		}
@@ -147,7 +149,7 @@ public class Rec extends Thread {
 		// Calculando as médias
 		ArrayList<Double> mediaT = new ArrayList<>();
 		ArrayList<Double> mediaD = new ArrayList<>();
-		for (int i = 0; i < (numeroParticoes - 1); i++) {
+		for (int i = 0; i < numeroParticoes; i++) {
 			double soma = 0;
 			ArrayList<Double> Tatual = todosOsT.get(i);
 			for (int j = 0; j < Tatual.size(); j++) {
@@ -168,7 +170,7 @@ public class Rec extends Thread {
 		// Calculando o desvio padrão
 		ArrayList<Double> desvioPadraoT = new ArrayList<>();
 		ArrayList<Double> desvioPadraoD = new ArrayList<>();
-		for (int i = 0; i < (numeroParticoes - 1); i++) {
+		for (int i = 0; i < numeroParticoes; i++) {
 			ArrayList<Double> Tatual = todosOsT.get(i);
 			double mediaAtualT = mediaT.get(i);
 			double somaQuadradosT = 0;
