@@ -51,7 +51,7 @@ public class ReconciliationReport {
 
 
     // Adiciona os pares de valores de dois ArrayLists a uma linha específica
-    public static void adicionaValoresALinha(int linha, ArrayList<Double> temposParciais, ArrayList<Double> distanciasParciais) {
+    public static void adicionaValoresALinhaTimeDistance(int linha, ArrayList<Double> temposParciais, ArrayList<Double> distanciasParciais) {
         try (Workbook workbook = WorkbookFactory.create(new FileInputStream(fileName))) {
             // Adiciona os pares de valores à linha especificada na primeira sheet
             Sheet sheet = workbook.getSheetAt(0); // Obtém a primeira sheet
@@ -90,6 +90,31 @@ public class ReconciliationReport {
         }
     }
 
+    // Lê os dados de uma coluna específica e retorna como ArrayList<Double>
+    public static ArrayList<Double> lerColunaTimeDistance(int coluna) {
+        ArrayList<Double> valores = new ArrayList<>();
+
+        try (Workbook workbook = WorkbookFactory.create(new FileInputStream(fileName))) {
+            Sheet sheet = workbook.getSheetAt(0); // Obtém a primeira sheet
+
+            // Itera sobre as linhas da sheet, começando da segunda linha (índice 1)
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+                Row row = sheet.getRow(i);
+                if (row != null) {
+                    Cell cell = row.getCell(coluna);
+                    if (cell != null && cell.getCellType() == CellType.NUMERIC) {
+                        double valor = cell.getNumericCellValue();
+                        valores.add(valor);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return valores;
+    }
+
     // Adiciona uma nova sheet com o cabeçalho especificado
     public static void adicionaSheetEstatisticas(int numeroParticoes) {
         try (Workbook workbook = WorkbookFactory.create(new FileInputStream(fileName))) {
@@ -114,12 +139,14 @@ public class ReconciliationReport {
         Row headerRow = sheet.createRow(0);
 
         // Define os cabeçalhos das colunas
+        headerRow.createCell(0).setCellValue("Tempos");
         headerRow.createCell(1).setCellValue("Médias");
         headerRow.createCell(2).setCellValue("Desvio Padrão");
         headerRow.createCell(3).setCellValue("Polarização (bias)");
         headerRow.createCell(4).setCellValue("Precisão");
         headerRow.createCell(5).setCellValue("Incerteza");
 
+        headerRow.createCell(9).setCellValue("Distâncias");
         headerRow.createCell(10).setCellValue("Médias");
         headerRow.createCell(11).setCellValue("Desvio Padrão");
         headerRow.createCell(12).setCellValue("Polarização (bias)");
@@ -134,31 +161,6 @@ public class ReconciliationReport {
         Row row = sheet.createRow(numeroParticoes);
         row.createCell(0).setCellValue("tTOTAL");
         row.createCell(9).setCellValue("dTOTAL");
-    }
-
-    // Lê os dados de uma coluna específica e retorna como ArrayList<Double>
-    public static ArrayList<Double> lerColuna(int coluna) {
-        ArrayList<Double> valores = new ArrayList<>();
-
-        try (Workbook workbook = WorkbookFactory.create(new FileInputStream(fileName))) {
-            Sheet sheet = workbook.getSheetAt(0); // Obtém a primeira sheet
-
-            // Itera sobre as linhas da sheet, começando da segunda linha (índice 1)
-            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
-                Row row = sheet.getRow(i);
-                if (row != null) {
-                    Cell cell = row.getCell(coluna);
-                    if (cell != null && cell.getCellType() == CellType.NUMERIC) {
-                        double valor = cell.getNumericCellValue();
-                        valores.add(valor);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return valores;
     }
 
     // Adiciona os valores de um ArrayList de Double a uma coluna específica na sheet "Statistics"

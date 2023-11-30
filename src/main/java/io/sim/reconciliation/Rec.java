@@ -13,6 +13,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import io.sim.reconciliation.chart.Grafico;
 import io.sim.reconciliation.excel.LeitorRelatorioCarros;
 import io.sim.reconciliation.excel.ReconciliationReport;
 
@@ -56,9 +57,21 @@ public class Rec extends Thread {
 			ReconciliationReport.criaReconciliationReport(numeroParticoes);
 			System.out.println("\nCalculando as parciais...");
 			calcularParciais(numeroParticoes, timeStamps, distancias);
+			
+			// Obtendo os dados de TimeDistanceReport
+			ArrayList<ArrayList<Double>> todosOsT = new ArrayList<>();
+			ArrayList<ArrayList<Double>> todosOsD = new ArrayList<>();
+			for (int i = 0; i < numeroParticoes; i++) {
+				todosOsT.add(ReconciliationReport.lerColunaTimeDistance(i*2));
+				todosOsD.add(ReconciliationReport.lerColunaTimeDistance((i*2) + 1));
+			}
+
 			System.out.println("\nCalculando as estatísticas...");
 			ReconciliationReport.adicionaSheetEstatisticas(numeroParticoes);
-			calcularEstatisticas(numeroParticoes);
+			calcularEstatisticas(numeroParticoes, todosOsT, todosOsD);
+
+			System.out.println("\n\nPlotando os gráficos de dispersão...");
+			Grafico.plotarGraficosDispersoes(todosOsT, todosOsD);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -130,22 +143,14 @@ public class Rec extends Thread {
 			}
 			distanciasParciais.add(soma);
 
-			ReconciliationReport.adicionaValoresALinha(i, temposParciais, distanciasParciais);
+			ReconciliationReport.adicionaValoresALinhaTimeDistance(i, temposParciais, distanciasParciais);
 		
 			temposParciais.clear();
 			distanciasParciais.clear();
 		}
 	}
 
-	private static void calcularEstatisticas(int numeroParticoes) {
-		// Obtendo os dados
-		ArrayList<ArrayList<Double>> todosOsT = new ArrayList<>();
-		ArrayList<ArrayList<Double>> todosOsD = new ArrayList<>();
-		for (int i = 0; i < numeroParticoes; i++) {
-			todosOsT.add(ReconciliationReport.lerColuna(i*2));
-			todosOsD.add(ReconciliationReport.lerColuna((i*2) + 1));
-		}
-
+	private static void calcularEstatisticas(int numeroParticoes, ArrayList<ArrayList<Double>> todosOsT, ArrayList<ArrayList<Double>> todosOsD) {
 		// Calculando as médias
 		ArrayList<Double> mediaT = new ArrayList<>();
 		ArrayList<Double> mediaD = new ArrayList<>();
@@ -192,6 +197,20 @@ public class Rec extends Thread {
 	
 		ReconciliationReport.escreverDadosColunaEstatisticas(2, desvioPadraoT);
 		ReconciliationReport.escreverDadosColunaEstatisticas(11, desvioPadraoD);
+
+		// Calculando a polarização (bias)
+		ArrayList<Double> polarizacaoT = new ArrayList<>();
+		ArrayList<Double> polarizacaoD = new ArrayList<>();
+		for (int i = 0; i < numeroParticoes; i++) {
+			double polarizacaoAtualT = mediaT.get(i) / desvioPadraoT.get(i);
+			polarizacaoT.add(polarizacaoAtualT);
+	
+			double polarizacaoAtualD = mediaD.get(i) / desvioPadraoD.get(i);
+			polarizacaoD.add(polarizacaoAtualD);
+		}
+	
+		ReconciliationReport.escreverDadosColunaEstatisticas(3, polarizacaoT);
+		ReconciliationReport.escreverDadosColunaEstatisticas(12, polarizacaoD);
 	}
 
     private static void reconcilializacaoDados() {
