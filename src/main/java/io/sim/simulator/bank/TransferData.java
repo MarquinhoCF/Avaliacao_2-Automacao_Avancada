@@ -55,7 +55,7 @@ public class TransferData {
 
     // Define a hora da transferência
     public void setTimestamp() {
-        timestamp = new Timestamp(System.currentTimeMillis());
+        timestamp = new Timestamp(System.nanoTime());
     }
 
     // Obtém o carimbo de data e hora da transferência

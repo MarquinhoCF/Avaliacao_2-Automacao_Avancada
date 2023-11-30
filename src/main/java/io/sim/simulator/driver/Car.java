@@ -285,7 +285,7 @@ public class Car extends Vehicle implements Runnable {
 						this.idCar, this.driverID, this.carStatus, this.latAnt, this.lonAnt,
 						this.latAtual, this.lonAtual, precisaAttExcel,
 						
-						System.currentTimeMillis(), (String) this.sumo.do_job_get(Vehicle.getRouteID(this.idCar)), 
+						System.nanoTime(), (String) this.sumo.do_job_get(Vehicle.getRouteID(this.idCar)), 
 						(double) this.sumo.do_job_get(Vehicle.getSpeed(this.idCar)), 
 						0, // CarManipulator faz o Calculo e usa setDistance() no DrivingData
 						this.consumoCombustivel, this.fuelType,
