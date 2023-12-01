@@ -140,21 +140,13 @@ public class ReconciliationReport {
         row.createCell(9).setCellValue("dTOTAL");
     }
 
-    // Adiciona os valores de um ArrayList de Double a uma coluna específica na sheet "Statistics"
-    public static void escreverDadosColunaEstatisticas(int coluna, ArrayList<Double> valores) {
+    // Adiciona uma nova sheet com o cabeçalho especificado
+    public static void adicionaSheetVelocidade(int numeroParticoes) {
         try (Workbook workbook = WorkbookFactory.create(new FileInputStream(fileName))) {
-            Sheet sheet = workbook.getSheet("Statistics"); // Obtém a sheet "Statistics"
+            Sheet sheet = workbook.createSheet("Speeds"); // Cria uma nova sheet
 
-            // Itera sobre os valores e adiciona à coluna específica
-            for (int i = 0; i < valores.size(); i++) {
-                Row row = sheet.getRow(i + 1); // Começa da segunda linha (índice 1)
-                if (row == null) {
-                    row = sheet.createRow(i + 1);
-                }
-
-                Cell cell = row.createCell(coluna);
-                cell.setCellValue(valores.get(i));
-            }
+            // Cria o cabeçalho da planilha de estatísticas
+            criaCabecalhoSpeed(sheet, numeroParticoes);
 
             // Salva as alterações na planilha
             try (FileOutputStream outputStream = new FileOutputStream(fileName)) {
@@ -165,6 +157,36 @@ public class ReconciliationReport {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    // Cria o cabeçalho da planilha de estatísticas
+    private static void criaCabecalhoSpeed(Sheet sheet, int numeroParticoes) {
+        Row headerRow = sheet.createRow(0);
+
+        // Define os cabeçalhos das colunas
+        headerRow.createCell(0).setCellValue("Parciais");
+        headerRow.createCell(1).setCellValue("Velocidade");
+        headerRow.createCell(2).setCellValue("Incerteza");
+        headerRow.createCell(3).setCellValue("Unidade de medida");
+
+        headerRow.createCell(6).setCellValue("Parciais");
+        headerRow.createCell(7).setCellValue("Velocidade");
+        headerRow.createCell(8).setCellValue("Incerteza");
+        headerRow.createCell(9).setCellValue("Unidade de medida");
+
+        for (int i = 1; i <= (numeroParticoes - 1); i++) {
+            Row row = sheet.createRow(i);
+            String texto = "v" + i;
+            row.createCell(0).setCellValue(texto);
+            row.createCell(3).setCellValue("m/s");
+            row.createCell(6).setCellValue(texto);
+            row.createCell(9).setCellValue("Km/h");
+        }
+        Row row = sheet.createRow(numeroParticoes);
+        row.createCell(0).setCellValue("vTOTAL");
+        row.createCell(3).setCellValue("m/s");
+        row.createCell(6).setCellValue("vTOTAL");
+        row.createCell(9).setCellValue("Km/h");
     }
 
     // Lê os dados de uma coluna específica e retorna como ArrayList<Double>
@@ -192,5 +214,30 @@ public class ReconciliationReport {
         return valores;
     }
 
+    public static void escreverDadosColunaReconciliation(int numSheet,int coluna, ArrayList<Double> valores) {
+        try (Workbook workbook = WorkbookFactory.create(new FileInputStream(fileName))) {
+            Sheet sheet = workbook.getSheetAt(numSheet);
+
+            // Itera sobre os valores e adiciona à coluna específica
+            for (int i = 0; i < valores.size(); i++) {
+                Row row = sheet.getRow(i + 1); // Começa da segunda linha (índice 1)
+                if (row == null) {
+                    row = sheet.createRow(i + 1);
+                }
+
+                Cell cell = row.createCell(coluna);
+                cell.setCellValue(valores.get(i));
+            }
+
+            // Salva as alterações na planilha
+            try (FileOutputStream outputStream = new FileOutputStream(fileName)) {
+                workbook.write(outputStream);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
 

@@ -18,12 +18,12 @@ import io.sim.reconciliation.chart.Grafico;
 import io.sim.reconciliation.excel.LeitorRelatorioCarros;
 import io.sim.reconciliation.excel.ReconciliationReport;
 
-public class Rec extends Thread {
+public class CalcularEstatisticas extends Thread {
 
-	private static int numeroRepeticoes = 100;
+	private static int numeroDeamostras = 100;
 	private static long taxaAquisicao = 20;
 
-	public Rec() {
+	public CalcularEstatisticas() {
 
 	}
 
@@ -66,6 +66,9 @@ public class Rec extends Thread {
 				todosOsD.add(ReconciliationReport.lerColunaReconciliation(0, (i*2) + 1));
 			}
 
+			System.out.println("\nPlotando os gráficos de dispersão...");
+			Grafico.plotarGraficosDispersoes(todosOsT, todosOsD);
+
 			System.out.println("\nCalculando a média e desvio padrão...");
 			ReconciliationReport.adicionaSheetEstatisticas(numeroParticoes);
 			calcularEstatisticas1(numeroParticoes, todosOsT, todosOsD);
@@ -75,9 +78,13 @@ public class Rec extends Thread {
 
 			System.out.println("\nCalculando as estatísticas...");
 			calcularEstatisticas2(numeroParticoes);
+
+			System.out.println("\nCalculando as velocidades e suas incertezas para cada parcial...");
+			ReconciliationReport.adicionaSheetVelocidade(numeroParticoes);
+			calculaVelocidade(numeroParticoes);
 			
-			System.out.println("\n\nPlotando os gráficos de dispersão...");
-			Grafico.plotarGraficosDispersoes(todosOsT, todosOsD);
+			System.out.println("\nCalculo das velocidades finalizado!!");
+			System.out.println("\nVerifique o relatório ReconciliationReport.xlsx para observá-las");
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -126,7 +133,7 @@ public class Rec extends Thread {
 	}
 
 	private static void calcularParciais(int numeroParticoes, ArrayList<Double> timeStamps, ArrayList<Double> distancias) {
-		for (int i = 1; i <= numeroRepeticoes; i++) {
+		for (int i = 1; i <= numeroDeamostras; i++) {
 			ArrayList<Double> temposParciais = new ArrayList<>();
 			ArrayList<Double> distanciasParciais = new ArrayList<>();
 		
@@ -175,8 +182,8 @@ public class Rec extends Thread {
 			}
 			mediaD.add(soma/Datual.size());
 		}
-		ReconciliationReport.escreverDadosColunaEstatisticas(1, mediaT);
-		ReconciliationReport.escreverDadosColunaEstatisticas(10, mediaD);
+		ReconciliationReport.escreverDadosColunaReconciliation(1, 1, mediaT);
+		ReconciliationReport.escreverDadosColunaReconciliation(1, 10, mediaD);
 
 		// Calculando o desvio padrão
 		ArrayList<Double> desvioPadraoT = new ArrayList<>();
@@ -201,34 +208,36 @@ public class Rec extends Thread {
 			desvioPadraoD.add(Math.sqrt(somaQuadradosD / Datual.size()));
 		}
 	
-		ReconciliationReport.escreverDadosColunaEstatisticas(2, desvioPadraoT);
-		ReconciliationReport.escreverDadosColunaEstatisticas(11, desvioPadraoD);
+		ReconciliationReport.escreverDadosColunaReconciliation(1, 2, desvioPadraoT);
+		ReconciliationReport.escreverDadosColunaReconciliation(1, 11, desvioPadraoD);
 	}
 
     private static void preparaReconciliacao() {
 		// Fazendo a Reconciliação para os tempos:
 		ArrayList<Double> mediasT = ReconciliationReport.lerColunaReconciliation(1, 1);
 		ArrayList<Double> desvioPadraoT = ReconciliationReport.lerColunaReconciliation(1, 2);
-		double[] Treconciliado = reconciliacao(mediasT, desvioPadraoT);
+		Reconciliation ReconciliacaoT = reconciliacao(mediasT, desvioPadraoT);
+		double[] Treconciliado = ReconciliacaoT.getReconciledFlow();
 		ArrayList<Double> Trec = new ArrayList<>();
 		for (double t : Treconciliado) {
 			Trec.add(t);
 		}
 		Trec.remove(Trec.size() - 1); // Remove o lixo que ficou acumulado no vetor para que ele não seja escrito no Excel
-		ReconciliationReport.escreverDadosColunaEstatisticas(3, Trec);
+		ReconciliationReport.escreverDadosColunaReconciliation(1, 3, Trec);
 		
 		ArrayList<Double> mediasD = ReconciliationReport.lerColunaReconciliation(1, 10);
 		ArrayList<Double> desvioPadraoD = ReconciliationReport.lerColunaReconciliation(1, 11);
-		double[] Dreconciliado = reconciliacao(mediasD, desvioPadraoD);
+		Reconciliation ReconciliacaoD = reconciliacao(mediasD, desvioPadraoD);
+		double[] Dreconciliado = ReconciliacaoD.getReconciledFlow();
 		ArrayList<Double> Drec = new ArrayList<>();
-		for (double d : Dreconciliado) {
-			Drec.add(d);
+		for (double t : Dreconciliado) {
+			Drec.add(t);
 		}
 		Drec.remove(Drec.size() - 1); // Remove o lixo que ficou acumulado no vetor para que ele não seja escrito no Excel
-		ReconciliationReport.escreverDadosColunaEstatisticas(12, Drec);
+		ReconciliationReport.escreverDadosColunaReconciliation(1, 12, Drec);
 	}
 
-	private static double[] reconciliacao(ArrayList<Double> medias, ArrayList<Double> desvioPadrao) {
+	private static Reconciliation reconciliacao(ArrayList<Double> medias, ArrayList<Double> desvioPadrao) {
 		int tam = medias.size();
 		double[] y = new double[tam];
 		for (int i = 0; i < tam; i++) {
@@ -249,7 +258,7 @@ public class Rec extends Thread {
         A[tam - 1] = -1;
 
 		Reconciliation rec = new Reconciliation(y, v, A);
-		return rec.getReconciledFlow();
+		return rec;
 	}
 
 	private static void calcularEstatisticas2(int numeroParticoes) {
@@ -260,7 +269,7 @@ public class Rec extends Thread {
 		ArrayList<Double> desvioPadraoD = ReconciliationReport.lerColunaReconciliation(1, 11);
 		ArrayList<Double> Treconciliado = ReconciliationReport.lerColunaReconciliation(1, 3);
 		ArrayList<Double> Dreconciliado = ReconciliationReport.lerColunaReconciliation(1, 12);
-
+	
 		// Calculando a Polarização (bias);
 		ArrayList<Double> biasT = new ArrayList<>();
 		ArrayList<Double> biasD = new ArrayList<>();
@@ -268,8 +277,69 @@ public class Rec extends Thread {
 			biasT.add(Treconciliado.get(i) - mediaT.get(i));
 			biasD.add(Dreconciliado.get(i) - mediaD.get(i));
 		}
-		ReconciliationReport.escreverDadosColunaEstatisticas(4, biasT);
-		ReconciliationReport.escreverDadosColunaEstatisticas(13, biasD);
+		ReconciliationReport.escreverDadosColunaReconciliation(1, 4, biasT);
+		ReconciliationReport.escreverDadosColunaReconciliation(1, 13, biasD);
+	
+		// Calculando a Precisão
+		ArrayList<Double> precisaoT = new ArrayList<>();
+		ArrayList<Double> precisaoD = new ArrayList<>();
+		for (int i = 0; i < numeroParticoes; i++) {
+			precisaoT.add(1 - (desvioPadraoT.get(i) / mediaT.get(i)));
+			precisaoD.add(1 - (desvioPadraoD.get(i) / mediaD.get(i)));
+		}
+		ReconciliationReport.escreverDadosColunaReconciliation(1, 5, precisaoT);
+		ReconciliationReport.escreverDadosColunaReconciliation(1, 14, precisaoD);
+	
+		// Calculando a Incerteza
+		ArrayList<Double> incertezaT = new ArrayList<>();
+		ArrayList<Double> incertezaD = new ArrayList<>();
+		for (int i = 0; i < numeroParticoes; i++) {
+			incertezaT.add(desvioPadraoT.get(i) / Math.sqrt(numeroDeamostras));
+			incertezaD.add(desvioPadraoD.get(i) / Math.sqrt(numeroDeamostras));
+		}
+		ReconciliationReport.escreverDadosColunaReconciliation(1, 6, incertezaT);
+		ReconciliationReport.escreverDadosColunaReconciliation(1, 15, incertezaD);
 	}
 
+	private static void calculaVelocidade(int numeroParticoes) {
+		ArrayList<Double> Treconciliado = ReconciliationReport.lerColunaReconciliation(1, 3);
+		ArrayList<Double> Dreconciliado = ReconciliationReport.lerColunaReconciliation(1, 12);
+		ArrayList<Double> incertezaT = ReconciliationReport.lerColunaReconciliation(1, 6);
+		ArrayList<Double> incertezaD = ReconciliationReport.lerColunaReconciliation(1, 15);
+	
+		// Lista para armazenar as velocidades calculadas
+		ArrayList<Double> velocidades = new ArrayList<>();
+		// Lista para armazenar as incertezas propagadas da velocidade
+		ArrayList<Double> incertezas = new ArrayList<>();
+	
+		// Calcula velocidades e incertezas propagadas
+		for (int i = 0; i < numeroParticoes; i++) {
+			double tempo = Treconciliado.get(i);
+			double distancia = Dreconciliado.get(i);
+			double incertezaTempo = incertezaT.get(i);
+			double incertezaDistancia = incertezaD.get(i);
+	
+			// Calcula velocidade
+			double velocidade = distancia / tempo;
+			velocidades.add(velocidade);
+	
+			// Calcula a incerteza propagada da velocidade
+			double termo1 = (1 / tempo) * incertezaDistancia;
+			double termo2 = (-distancia / (tempo * tempo)) * incertezaTempo;
+			double incertezaVelocidade = Math.sqrt(termo1 * termo1 + termo2 * termo2);
+			incertezas.add(incertezaVelocidade);
+		}
+		ReconciliationReport.escreverDadosColunaReconciliation(2, 1, velocidades);
+		ReconciliationReport.escreverDadosColunaReconciliation(2, 2, incertezas);
+
+		for (int i = 0; i < velocidades.size(); i++) {
+			velocidades.set(i, velocidades.get(i)*3.6);
+		}
+		for (int i = 0; i < incertezas.size(); i++) {
+			incertezas.set(i, incertezas.get(i)*3.6);
+		}
+		ReconciliationReport.escreverDadosColunaReconciliation(2, 7, velocidades);
+		ReconciliationReport.escreverDadosColunaReconciliation(2, 8, incertezas);
+	}
+	
 }
