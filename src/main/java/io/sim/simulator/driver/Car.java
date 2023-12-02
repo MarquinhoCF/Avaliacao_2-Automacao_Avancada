@@ -186,10 +186,16 @@ public class Car extends Vehicle implements Runnable {
 					if(!edges.isEmpty()) {
 						if(edgeAtual.equals(edges.get(0))){
 							String edge1 = edges.remove(0);
-							String edge2 = edges.remove(0);
+							String texto;
+							if (!edges.isEmpty()){
+								String edge2 = edges.remove(0);
+								texto = "Partição " + i + ": " + edge1 + " " + edge2 + " percorridas";
+							} else {
+								texto = "Partição " + i + ": " + edge1 + " percorrida";
+							}
 							this.precisaAttExcel = 1;
 							i++;
-							System.out.println("Partição " + i + ": " + edge1 + " " + edge2 + " percorridas");
+							System.out.println(texto);
 						}
 					}
 
@@ -279,6 +285,10 @@ public class Car extends Vehicle implements Runnable {
 				// System.out.println("RoadID: " + (String) this.sumo.do_job_get(Vehicle.getRoadID(this.idCar)));
 				// System.out.println("RouteID: " + (String) this.sumo.do_job_get(Vehicle.getRouteID(this.idCar)));
 				// System.out.println("RouteIndex: " + this.sumo.do_job_get(Vehicle.getRouteIndex(this.idCar)));
+
+				while(!Company.estaNoSUMO(idCar, sumo)) {
+					Thread.sleep(acquisitionRate/10);
+				}
 				
 				// Atualiza os dados de condução do veículo.
 				drivingDataAtual = new DrivingData(

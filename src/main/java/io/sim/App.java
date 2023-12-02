@@ -1,6 +1,7 @@
 package io.sim;
 
-// import io.sim.reconciliation.Rec;
+
+import io.sim.reconciliation.CalcularEstatisticas;
 import io.sim.simulator.simulation.EnvSimulator;
 
 /**
@@ -8,8 +9,11 @@ import io.sim.simulator.simulation.EnvSimulator;
  */
 public class App {
     public static void main(String[] args) throws InterruptedException {
+	    long taxaAquisicao = 40;
+        int numeroDeAmostras = 100;
+        
         // Cria uma instância da classe EnvSimulator
-        EnvSimulator ev = new EnvSimulator();
+        EnvSimulator ev = new EnvSimulator(taxaAquisicao, numeroDeAmostras);
         
         // Inicia a execução da simulação chamando o método "start" na instância
         ev.start();
@@ -21,9 +25,9 @@ public class App {
             e.printStackTrace();
         }
 
-        // Rec rec = new Rec();
-        // rec.start();
-        // rec.join();
+        CalcularEstatisticas calc = new CalcularEstatisticas(taxaAquisicao, numeroDeAmostras);
+        calc.start();
+        calc.join();
 
         System.out.println("Encerando APP!");
         System.exit(0);

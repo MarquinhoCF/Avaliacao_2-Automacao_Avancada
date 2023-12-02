@@ -27,7 +27,7 @@ public class EnvSimulator extends Thread {
     private static boolean considerarConsumoComb;
 	private static String rotasXML;
 
-    public EnvSimulator() {
+    public EnvSimulator(long _taxaAquisicao, int _replicacoesRota) {
         // Configuração inicial do ambiente e conexão com o SUMO
         String sumo_bin = "sumo-gui";        
         String config_file = "map/map.sumo.cfg";
@@ -40,10 +40,10 @@ public class EnvSimulator extends Thread {
         portaSUMO = 12345;
         portaCompany = 23415;
         portaAlphaBank = 54321;
-        taxaAquisicao = 20;
+        taxaAquisicao = _taxaAquisicao;
         numDrivers = 1;
-        replicacoesRota = 100;
-        considerarConsumoComb = true;
+        replicacoesRota = _replicacoesRota;
+        considerarConsumoComb = false;
         rotasXML = "data/dadosAV2.xml";
     }
 

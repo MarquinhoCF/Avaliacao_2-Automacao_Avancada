@@ -2,7 +2,6 @@ package io.sim.reconciliation.chart;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
-import java.util.Random;
 
 import org.jfree.chart.ChartColor;
 import org.jfree.chart.ChartFactory;
@@ -58,7 +57,7 @@ public class Grafico extends ApplicationFrame {
                     title = "Dispersão: tTOTAL x dTOTAL";
                 }
 
-                auxPlotarGraficos(title, todosOsD.get(i), todosOsT.get(i));
+                auxPlotarGraficos(title, todosOsT.get(i), todosOsD.get(i));
             }
         } else {
             System.out.println("Houve erro na quisição de dados, por favor realize a simulação novamente!");
@@ -68,8 +67,8 @@ public class Grafico extends ApplicationFrame {
     private static void auxPlotarGraficos(String title, ArrayList<Double> xData, ArrayList<Double> yData) {
         double minX = xData.stream().mapToDouble(Double::doubleValue).min().orElse(0);
         double maxX = xData.stream().mapToDouble(Double::doubleValue).max().orElse(10);
-        double minY = yData.stream().mapToDouble(Double::doubleValue).min().orElse(0);
-        double maxY = yData.stream().mapToDouble(Double::doubleValue).max().orElse(10);
+        double minY = yData.stream().mapToDouble(Double::doubleValue).min().orElse(0) - 25;
+        double maxY = yData.stream().mapToDouble(Double::doubleValue).max().orElse(10) + 25;
 
         Grafico scatterPlot = new Grafico(title);
         for (int j = 0; j < xData.size(); j++) {
@@ -83,9 +82,8 @@ public class Grafico extends ApplicationFrame {
         // Obtendo o renderizador
         XYItemRenderer renderer = plot.getRenderer();
 
-        // Mudando a cor dos pontos
-        Random random = new Random();
-        ChartColor randomColor = new ChartColor(random.nextInt(256), random.nextInt(256), random.nextInt(256));
+        // Definindo a cor dos pontos
+        ChartColor randomColor = new ChartColor(14, 18, 77);
         renderer.setSeriesPaint(0, randomColor);
 
         scatterPlot.pack();
