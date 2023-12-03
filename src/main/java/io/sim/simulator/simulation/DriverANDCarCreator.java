@@ -13,13 +13,13 @@ import de.tudresden.sumo.objects.SumoColor;
 // A classe DriverANDCarCreator é responsável por criar os componentes principais da simulação, ou seja, os motoristas e os carros que eles dirigirão
 public class DriverANDCarCreator {
     // Método para criar uma lista de drivers e carros
-    public static ArrayList<Driver> criaListaDrivers(int qtdDrivers, FuelStation fuelStation, long taxaAquisicao, SumoTraciConnection sumo, String host, int portaCompanny, int portaAlphaBank, boolean considerarConsumoComb) {
+    public static ArrayList<Driver> criaListaDrivers(int qtdDrivers, FuelStation fuelStation, long taxaAquisicao, SumoTraciConnection sumo, String host, int portaCompanny, int portaAlphaBank, boolean considerarConsumoComb, int av2Parte) {
         ArrayList<Driver> drivers = new ArrayList<>();
 
         for (int i = 0; i < qtdDrivers; i++) {
             String driverID = "Driver " + (i + 1);
             String carID = "Car " + (i + 1);
-            Car car = createCar(carID, driverID, taxaAquisicao, sumo, host, portaCompanny, considerarConsumoComb);
+            Car car = createCar(carID, driverID, taxaAquisicao, sumo, host, portaCompanny, considerarConsumoComb, av2Parte);
 
             Driver driver = new Driver(driverID, car, taxaAquisicao, fuelStation, portaAlphaBank, host);
             drivers.add(driver);
@@ -29,7 +29,7 @@ public class DriverANDCarCreator {
     }
 
     // Método estático para criar um objeto Car com cores aleatórias
-    public static Car createCar(String idCar, String driverID, long taxaAquisicao, SumoTraciConnection sumo, String host, int companyServerPort, boolean considerarConsumoComb) {
+    public static Car createCar(String idCar, String driverID, long taxaAquisicao, SumoTraciConnection sumo, String host, int companyServerPort, boolean considerarConsumoComb, int av2Parte) {
         try {
             // Define as características comuns para os novos objetos Car
             boolean on_off = false;
@@ -50,7 +50,7 @@ public class DriverANDCarCreator {
             );
         
             // Cria um novo objeto Car com características comuns e cor aleatória
-            Car car = new Car(on_off, idCar, randomColor, driverID, sumo, taxaAquisicao, fuelType, fuelPreferential, fuelPrice, considerarConsumoComb, personCapacity, personNumber, host, companyServerPort);
+            Car car = new Car(on_off, idCar, randomColor, driverID, sumo, taxaAquisicao, fuelType, fuelPreferential, fuelPrice, considerarConsumoComb, personCapacity, personNumber, host, companyServerPort, av2Parte);
             return car;
         } catch (Exception e) {
             e.printStackTrace();

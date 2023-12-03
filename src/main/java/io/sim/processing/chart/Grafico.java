@@ -1,4 +1,4 @@
-package io.sim.reconciliation.chart;
+package io.sim.processing.chart;
 
 import java.awt.Dimension;
 import java.util.ArrayList;

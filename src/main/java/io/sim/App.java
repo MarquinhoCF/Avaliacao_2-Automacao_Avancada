@@ -8,11 +8,25 @@ import io.sim.simulator.simulation.EnvSimulator;
  */
 public class App {
     public static void main(String[] args) throws InterruptedException {
-	    long taxaAquisicao = 40;
-        int numeroDeAmostras = 100;
-        
+	    int parte = 2;
+        long taxaAquisicao = 100;
+        boolean considerarConsumoComb = true;
+
         // Cria uma instância da classe EnvSimulator
-        EnvSimulator ev = new EnvSimulator(taxaAquisicao, numeroDeAmostras);
+        EnvSimulator ev;
+        if (parte == 1) {
+            int numDrivers = 1;
+            int numeroDeAmostras = 100;
+            String rotasXML = "data/dadosAV2.xml";
+            ev = new EnvSimulator(taxaAquisicao, numDrivers, numeroDeAmostras, rotasXML, considerarConsumoComb);
+        } else {
+            int numDrivers = 100;
+            int numeroDeAmostras = 0;
+            String rotasXML = "data/dados.xml";
+            // TODO: Para AV1 é necessário retirar essa configuração do aquivo map.sumo.cfg: <route-files value="map.rou.xml"/>
+            ev = new EnvSimulator(taxaAquisicao, numDrivers, numeroDeAmostras, rotasXML, considerarConsumoComb);
+        }
+        
         
         // Inicia a execução da simulação chamando o método "start" na instância
         ev.start();
@@ -24,9 +38,11 @@ public class App {
             e.printStackTrace();
         }
 
-        // CalcularEstatisticas calc = new CalcularEstatisticas(taxaAquisicao, numeroDeAmostras);
-        // calc.start();
-        // calc.join();
+        if (parte == 1) {
+            // CalcularEstatisticas calc = new CalcularEstatisticas(taxaAquisicao, numeroDeAmostras);
+            // calc.start();
+            // calc.join();
+        }
 
         System.out.println("Encerando APP!");
         System.exit(0);

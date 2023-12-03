@@ -27,7 +27,7 @@ public class EnvSimulator extends Thread {
     private static boolean considerarConsumoComb;
 	private static String rotasXML;
 
-    public EnvSimulator(long _taxaAquisicao, int _replicacoesRota) {
+    public EnvSimulator(long _taxaAquisicao, int _numDrives, int _replicacoesRota, String _rotasXML, boolean _considerarConsumoComb) {
         // Configuração inicial do ambiente e conexão com o SUMO
         String sumo_bin = "sumo-gui";        
         String config_file = "map/map.sumo.cfg";
@@ -41,10 +41,10 @@ public class EnvSimulator extends Thread {
         portaCompany = 23415;
         portaAlphaBank = 54321;
         taxaAquisicao = _taxaAquisicao;
-        numDrivers = 1;
+        numDrivers = _numDrives;
         replicacoesRota = _replicacoesRota;
-        considerarConsumoComb = false;
-        rotasXML = "data/dadosAV2.xml";
+        considerarConsumoComb = _considerarConsumoComb;
+        rotasXML = _rotasXML;
     }
 
     public void run() {
@@ -72,13 +72,21 @@ public class EnvSimulator extends Thread {
             fuelStation.start();
 
             // Inicia um servidor Company na porta especificada
-            ArrayList<Rota> rotasDisp = Rota.criaArrayRotaAV2(rotasXML, replicacoesRota);
+            int av2Parte;
+            ArrayList<Rota> rotasDisp;
+            if (replicacoesRota == 0) {
+                av2Parte = 1;
+                rotasDisp = Rota.criaRotasXML(rotasXML);
+            } else {
+                av2Parte = 2;
+                rotasDisp = Rota.criaArrayRotaAV2(rotasXML, replicacoesRota);
+            }
             ServerSocket companyServer = new ServerSocket(portaCompany);
             Company company = new Company(companyServer, rotasDisp, numDrivers, portaAlphaBank, host);
             company.start();
 
             // Cria e inicia uma lista de drivers
-            ArrayList<Driver> drivers = DriverANDCarCreator.criaListaDrivers(numDrivers, fuelStation, taxaAquisicao, sumo, host, portaCompany, portaAlphaBank, considerarConsumoComb);
+            ArrayList<Driver> drivers = DriverANDCarCreator.criaListaDrivers(numDrivers, fuelStation, taxaAquisicao, sumo, host, portaCompany, portaAlphaBank, considerarConsumoComb, av2Parte);
 
             // Cria planilhas de relatórios
             ExcelReport.criaPlanilhas(company, drivers, fuelStation);

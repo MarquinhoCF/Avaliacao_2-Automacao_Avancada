@@ -1,4 +1,4 @@
-package io.sim.reconciliation;
+package io.sim.processing;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,9 +15,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import io.sim.reconciliation.chart.Grafico;
-import io.sim.reconciliation.excel.LeitorRelatorioCarros;
-import io.sim.reconciliation.excel.ReconciliationReport;
+import io.sim.processing.chart.Grafico;
+import io.sim.processing.excel.LeitorRelatorioCarros;
+import io.sim.processing.excel.ReconciliationReport;
+import io.sim.processing.reconciliation.Reconciliation;
 
 public class CalcularEstatisticas extends Thread {
 

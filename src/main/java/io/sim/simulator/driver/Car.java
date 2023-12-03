@@ -56,6 +56,7 @@ public class Car extends Vehicle implements Runnable {
 	private double latAtual;           		// Latitude atual.
 	private double lonAtual;           		// Longitude atual.
 	private int precisaAttExcel;
+	private int av2Parte;
 	private DrivingData drivingDataAtual; 	// Dados de condução atuais do veículo.
 	private ArrayList<DrivingData> drivingRepport; // Dados de condução registrados.
 	private TransportService ts;      		// Serviço de transporte associado ao veículo.
@@ -63,7 +64,7 @@ public class Car extends Vehicle implements Runnable {
 
 	public Car(boolean _on_off, String _idCar, SumoColor _colorCar, String _driverID, SumoTraciConnection _sumo, long _acquisitionRate,
 			int _fuelType, int _fuelPreferential, double _fuelPrice, boolean _considerarConsumoComb, int _personCapacity, int _personNumber, String _companyServerHost, 
-			int _companyServerPort) throws Exception {
+			int _companyServerPort, int _av2Parte) throws Exception {
 
 		this.companyServerPort = _companyServerPort;
 		this.companyServerHost = _companyServerHost;
@@ -99,6 +100,7 @@ public class Car extends Vehicle implements Runnable {
 		this.carStatus = "esperando";
 		this.drivingRepport = new ArrayList<DrivingData>();
 		this.precisaAttExcel = 0;
+		this.av2Parte = _av2Parte;
 		
 		this.drivingDataAtual = new DrivingData(idCar, driverID, "esperando", 0, 0, 0, 0,  precisaAttExcel,
 												0 , "", 0, 0, 0, this.fuelType, 0);
@@ -163,8 +165,14 @@ public class Car extends Vehicle implements Runnable {
 				// Pega a edge inicial da rota para usar em verificações
 				String edgeAtual = (String) this.sumo.do_job_get(Vehicle.getRoadID(this.idCar));
 				
-				ArrayList<String> edges = Rota.criaListaEdges(rota);
-				System.out.println("A rota " + rota.getID() + " precisa ser dividida em " + edges.size()/2 + " parciais");
+				ArrayList<String> edges;
+				
+				if (av2Parte == 1) {
+					edges = Rota.criaListaEdges(rota);
+					System.out.println("A rota " + rota.getID() + " precisa ser dividida em " + edges.size()/2 + " parciais");
+				} else {
+					edges = new ArrayList<String>();
+				}
 
 				int i = 0;
 				this.precisaAttExcel = 1;
@@ -183,7 +191,7 @@ public class Car extends Vehicle implements Runnable {
 						initRoute = false; // Só executa uma vez por rota
 					}
 
-					if(!edges.isEmpty()) {
+					if((!edges.isEmpty()) && (av2Parte == 1)) {
 						if(edgeAtual.equals(edges.get(0))){
 							String edge1 = edges.remove(0);
 							String texto;
@@ -239,7 +247,9 @@ public class Car extends Vehicle implements Runnable {
 							saida.write(AESencrypt.encripta(JSONConverter.criaJSONTamanhoBytes(mensagemEncriptada.length)));
 							saida.write(mensagemEncriptada);
 							
-							precisaAttExcel = 0;
+							if (av2Parte == 1) {
+								precisaAttExcel = 0;
+							}
 
 							if(!verificaRotaTerminada(edgeAtual, edgeFinal)) {
 								edgeAtual = (String) this.sumo.do_job_get(Vehicle.getRoadID(this.idCar)); // TODO: ERRO FREQUENTE AQUI
