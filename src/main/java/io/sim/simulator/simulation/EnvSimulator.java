@@ -75,10 +75,10 @@ public class EnvSimulator extends Thread {
             int av2Parte;
             ArrayList<Rota> rotasDisp;
             if (replicacoesRota == 0) {
-                av2Parte = 1;
+                av2Parte = 2;
                 rotasDisp = Rota.criaRotasXML(rotasXML);
             } else {
-                av2Parte = 2;
+                av2Parte = 1;
                 rotasDisp = Rota.criaArrayRotaAV2(rotasXML, replicacoesRota);
             }
             ServerSocket companyServer = new ServerSocket(portaCompany);

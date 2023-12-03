@@ -8,9 +8,9 @@ import io.sim.simulator.simulation.EnvSimulator;
  */
 public class App {
     public static void main(String[] args) throws InterruptedException {
-	    int parte = 2;
+	    int parte = 1;
         long taxaAquisicao = 100;
-        boolean considerarConsumoComb = true;
+        boolean considerarConsumoComb = false;
 
         // Cria uma instância da classe EnvSimulator
         EnvSimulator ev;
