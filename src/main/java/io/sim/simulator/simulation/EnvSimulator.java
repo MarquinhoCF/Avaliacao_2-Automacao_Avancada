@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 
+import io.sim.App;
 import io.sim.simulator.bank.AlphaBank;
 import io.sim.simulator.company.Company;
 import io.sim.simulator.company.Rota;
 import io.sim.simulator.driver.Driver;
 import io.sim.simulator.fuelStation.FuelStation;
+import io.sim.simulator.report.EscalonamentoTempoReal;
 import io.sim.simulator.report.ExcelReport;
 import it.polito.appeal.traci.SumoTraciConnection;
 
@@ -72,11 +74,12 @@ public class EnvSimulator extends Thread {
             fuelStation.start();
 
             // Inicia um servidor Company na porta especificada
-            int av2Parte;
+            int av2Parte = App.AV2PARTE;
             ArrayList<Rota> rotasDisp;
-            if (replicacoesRota == 0) {
+            if (av2Parte == 2) {
                 av2Parte = 2;
                 rotasDisp = Rota.criaRotasXML(rotasXML);
+                EscalonamentoTempoReal.criarTabelaTarefas();
             } else {
                 av2Parte = 1;
                 rotasDisp = Rota.criaArrayRotaAV2(rotasXML, replicacoesRota);
@@ -86,7 +89,7 @@ public class EnvSimulator extends Thread {
             company.start();
 
             // Cria e inicia uma lista de drivers
-            ArrayList<Driver> drivers = DriverANDCarCreator.criaListaDrivers(numDrivers, fuelStation, taxaAquisicao, sumo, host, portaCompany, portaAlphaBank, considerarConsumoComb, av2Parte);
+            ArrayList<Driver> drivers = DriverANDCarCreator.criaListaDrivers(numDrivers, fuelStation, taxaAquisicao, sumo, host, portaCompany, portaAlphaBank, considerarConsumoComb);
 
             // Cria planilhas de relatórios
             ExcelReport.criaPlanilhas(company, drivers, fuelStation);

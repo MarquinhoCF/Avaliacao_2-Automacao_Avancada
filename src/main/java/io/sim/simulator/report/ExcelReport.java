@@ -66,7 +66,7 @@ public class ExcelReport {
     }
 
     // Método para atualizar a planilha de carros com novos dados
-    public static void atualizaPlanilhaCar(DrivingData carReport) {
+    public synchronized static void atualizaPlanilhaCar(DrivingData carReport) {
         synchronized (ExcelReport.class) {
             try (FileInputStream inputStream = new FileInputStream(fileNameDD);
                 Workbook workbook = WorkbookFactory.create(inputStream);

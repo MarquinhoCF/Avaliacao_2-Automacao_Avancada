@@ -22,17 +22,16 @@ import io.sim.processing.reconciliation.Reconciliation;
 
 public class CalcularEstatisticas extends Thread {
 
-	private static long taxaAquisicao = 40;
-	private static int numeroDeAmostras = 100;
+	private long taxaAquisicao = 40;
+	private int numeroDeAmostras = 100;
 
 	public CalcularEstatisticas(long _taxaAquisicao, int _numeroDeAmostras) {
-		// this.taxaAquisicao = _taxaAquisicao;
-		// this.numeroDeAmostras = _numeroDeAmostras;
+		this.taxaAquisicao = _taxaAquisicao;
+		this.numeroDeAmostras = _numeroDeAmostras;
 	}
 
-	// @Override
-    // public void run() {
-	public static void main(String[] args) {
+	@Override
+    public void run() {
 		try {
 			System.out.println("\n\n======== Preparando os dados para a Realização da Reconciliação de Dados ========");
 			
@@ -93,7 +92,7 @@ public class CalcularEstatisticas extends Thread {
         }
 	}
 
-	private static int calculaNumeroParticoes(String xmlPath) {
+	private int calculaNumeroParticoes(String xmlPath) {
 		try {
 			// Configurando as classes necessárias para a análise do documento XML
 			File xmlFile = new File(xmlPath);
@@ -134,7 +133,7 @@ public class CalcularEstatisticas extends Thread {
 		return 0;
 	}
 
-	private static void calcularParciais(int numeroParticoes, ArrayList<Double> timeStamps, ArrayList<Double> distancias) {
+	private void calcularParciais(int numeroParticoes, ArrayList<Double> timeStamps, ArrayList<Double> distancias) {
 		for (int i = 1; i <= numeroDeAmostras; i++) {
 			ArrayList<Double> temposParciais = new ArrayList<>();
 			ArrayList<Double> distanciasParciais = new ArrayList<>();
@@ -159,7 +158,7 @@ public class CalcularEstatisticas extends Thread {
 		}
 	}
 
-	private static void calcularEstatisticas1(int numeroParticoes, ArrayList<ArrayList<Double>> todosOsT, ArrayList<ArrayList<Double>> todosOsD) {
+	private void calcularEstatisticas1(int numeroParticoes, ArrayList<ArrayList<Double>> todosOsT, ArrayList<ArrayList<Double>> todosOsD) {
 		// Calculando as médias
 		ArrayList<Double> mediaT = new ArrayList<>();
 		ArrayList<Double> mediaD = new ArrayList<>();
@@ -208,7 +207,7 @@ public class CalcularEstatisticas extends Thread {
 		ReconciliationReport.escreverDadosColunaReconciliation(1, 11, desvioPadraoD);
 	}
 
-    private static void preparaReconciliacao(int numeroParticoes) {
+    private void preparaReconciliacao(int numeroParticoes) {
 		// Obtendo os dados de uma medição randomica
         // Gerando um número aleatório entre 1 e 100
 		Random random = new Random();
@@ -246,7 +245,7 @@ public class CalcularEstatisticas extends Thread {
 		ReconciliationReport.escreverDadosColunaReconciliation(1, 12, Drec);
 	}
 
-	private static Reconciliation reconciliacao(ArrayList<Double> medias, ArrayList<Double> desvioPadrao) {
+	private Reconciliation reconciliacao(ArrayList<Double> medias, ArrayList<Double> desvioPadrao) {
 		int tam = medias.size();
 		double[] y = new double[tam];
 		for (int i = 0; i < tam; i++) {
@@ -270,7 +269,7 @@ public class CalcularEstatisticas extends Thread {
 		return rec;
 	}
 
-	private static void calcularEstatisticas2(int numeroParticoes) {
+	private void calcularEstatisticas2(int numeroParticoes) {
 		// Obtendo os dados de Statistics
 		ArrayList<Double> mediaT = ReconciliationReport.lerColunaReconciliation(1, 1);
 		ArrayList<Double> mediaD = ReconciliationReport.lerColunaReconciliation(1, 10);

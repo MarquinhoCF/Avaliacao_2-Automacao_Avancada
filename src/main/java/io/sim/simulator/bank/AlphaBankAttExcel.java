@@ -1,5 +1,7 @@
 package io.sim.simulator.bank;
 
+import io.sim.App;
+import io.sim.simulator.report.AuxEscalonamento;
 import io.sim.simulator.report.ExcelReport;
 
 /**
@@ -10,15 +12,25 @@ public class AlphaBankAttExcel extends Thread {
     private AlphaBank alphaBank;
     private boolean funcionando;
 
+    // Atributos escalonamento de sistema em tempo real
+    private int av2Parte;
+    private long startTime;
+
     public AlphaBankAttExcel(AlphaBank _alphaBank) {
         this.alphaBank = _alphaBank;
         this.funcionando = true;
+
+        // Inicializa startTime e parte de AV2
+        this.av2Parte = App.AV2PARTE;
+        this.startTime = System.currentTimeMillis();
     }
 
     @Override
     public void run() {
         try {
+            boolean primeiraVez = true;
             while (funcionando) {
+                long inicio = System.currentTimeMillis();
                 Thread.sleep(10); // Aguarda por um curto período (10 milissegundos) para evitar uso intensivo da CPU
                 if (alphaBank.temRegistro()) {
                     // Se houver registros pendentes no AlphaBank
@@ -27,6 +39,12 @@ public class AlphaBankAttExcel extends Thread {
                     ExcelReport.atualizaPlanilhaAccount(registro);
                     // Chama o método do banco para enviar o registro ao histórico da conta correspondente
                     alphaBank.mandaRegistroAcc(registro);
+                }
+
+                if ((av2Parte == 2) && primeiraVez) {
+                    AuxEscalonamento aux = new AuxEscalonamento("AlphaBankAttExcel", 7, startTime, inicio);
+                    aux.start();
+                    primeiraVez = false;
                 }
             }
             System.out.println("AlphaBankAttExcel encerrou!");

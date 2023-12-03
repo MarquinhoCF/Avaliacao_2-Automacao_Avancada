@@ -1,5 +1,7 @@
 package io.sim.simulator.company;
 
+import io.sim.App;
+import io.sim.simulator.report.AuxEscalonamento;
 import io.sim.simulator.report.ExcelReport;
 
 /**
@@ -10,20 +12,41 @@ public class CompanyAttExcel extends Thread {
     private Company company; // Uma instância da classe Company
     private boolean funcionando;
 
+    // Atributos escalonamento de sistema em tempo real
+    private int av2Parte;
+    private long startTime;
+
     public CompanyAttExcel(Company _company) {
         this.company = _company;
         this.funcionando = true;
+
+        // Inicializa startTime e parte de AV2
+        this.av2Parte = App.AV2PARTE;
+        this.startTime = System.currentTimeMillis();
     }
 
     @Override
     public void run() {
         try {
             // Loop principal que verifica a disponibilidade de rotas
+            boolean primeiraVez = true;
+            boolean escreveuUmaVez = false;
             while (funcionando) {
+                long inicio = System.currentTimeMillis();
                 Thread.sleep(10); // Aguarda por um curto período (10 milissegundos) para evitar uso intensivo da CPU
                 if (company.temReport()) {
                     // Se a instância da classe Company possui relatórios para serem atualizados
                     ExcelReport.atualizaPlanilhaCar(company.pegaComunicacao());  // Atualiza o relatório no Excel
+                    if (primeiraVez) {
+                        escreveuUmaVez = true;
+                    }
+                }
+
+                if ((av2Parte == 2) && primeiraVez && escreveuUmaVez) {
+                    AuxEscalonamento aux = new AuxEscalonamento("CompanyAttExcel", 6, startTime, inicio);
+                    aux.start();
+                    primeiraVez = false;
+                    escreveuUmaVez = false;
                 }
             }
             System.out.println("CompanyAttExcel encerrou!");

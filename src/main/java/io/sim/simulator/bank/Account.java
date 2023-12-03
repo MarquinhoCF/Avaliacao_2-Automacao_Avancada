@@ -3,6 +3,9 @@ package io.sim.simulator.bank;
 import java.util.ArrayList;
 import java.util.Random;
 
+import io.sim.App;
+import io.sim.simulator.report.AuxEscalonamento;
+
 /**
  *      A classe Account representa uma conta-corrente bancária. Ela é executada como uma thread e permite depósitos, saques, 
  * verificações de saldo e histórico de transações. A conta é inicializada com uma identificação, senha e saldo.
@@ -17,6 +20,10 @@ public class Account extends Thread {
     // Atributos de sincronização
     private Object sincroniza; // Objeto para sincronização de threads
 
+    // Atributos escalonamento de sistema em tempo real
+    private int av2Parte;
+    private long startTime;
+
     public Account(String _accountID, String _senha, double _saldo) {
         this.accountID = _accountID; // Inicializa a identificação da conta
         this.senha = _senha; // Inicializa a senha da conta
@@ -24,18 +31,31 @@ public class Account extends Thread {
         this.historico = new ArrayList<TransferData>(); // Inicializa o histórico de transações
         this.funcionando = true; // Inicializa a conta como funcionando
         this.sincroniza = new Object(); // Inicializa o objeto de sincronização
+
+        // Inicializa startTime e parte de AV2
+        this.av2Parte = App.AV2PARTE;
+        this.startTime = System.currentTimeMillis();
     }
 
     @Override
     public void run() {
         try {
+            long inicio = System.currentTimeMillis();
             System.out.println("Account: " + accountID + " iniciando...");
             int tamHistoricoAnt = historico.size();
+
+            boolean primeiraVez = true;
             while (funcionando) {
                 Thread.sleep(2000); // Espera por 2 segundos
                 if (historico.size() > tamHistoricoAnt) {
                     System.out.println(historico.get(tamHistoricoAnt).getDescricao()); // Imprime a descrição de transação do histórico
                     tamHistoricoAnt = historico.size();
+                }
+
+                if ((av2Parte == 2) && primeiraVez) {
+                    AuxEscalonamento aux = new AuxEscalonamento("Account", 10, startTime, inicio);
+                    aux.start();
+                    primeiraVez = false;
                 }
             }
             System.out.println("Account: " + accountID + " FINALIZADA...");

@@ -82,7 +82,7 @@ public class DriverANDCarCreatorTest {
     public void testCreateCar() {
         String driverID = "Driver1";
         long taxaAquisicao = 1000;
-        Car car = DriverANDCarCreator.createCar("Car1", driverID, taxaAquisicao, sumo, host, portaCompany, considerarConsumoComb, 1);
+        Car car = DriverANDCarCreator.createCar("Car1", driverID, taxaAquisicao, sumo, host, portaCompany, considerarConsumoComb);
         assertNotNull(car);
         assertEquals(car.getIdCar(), "Car1");
         assertEquals(car.getDriverID(), "Driver1");
@@ -92,7 +92,7 @@ public class DriverANDCarCreatorTest {
     @Test
     public void testCriaListaDrivers() {
         int qtdDrivers = 5;
-        ArrayList<Driver> drivers = DriverANDCarCreator.criaListaDrivers(qtdDrivers, fuelStation, 1000, sumo, host, portaCompany, portaAlphaBank, considerarConsumoComb, 1);
+        ArrayList<Driver> drivers = DriverANDCarCreator.criaListaDrivers(qtdDrivers, fuelStation, 1000, sumo, host, portaCompany, portaAlphaBank, considerarConsumoComb);
         assertNotNull(drivers);
         assertEquals(qtdDrivers, drivers.size());
     }

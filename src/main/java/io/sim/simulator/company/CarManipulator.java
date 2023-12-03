@@ -5,9 +5,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+import io.sim.App;
 import io.sim.simulator.comunication.AESencrypt;
 import io.sim.simulator.comunication.JSONConverter;
 import io.sim.simulator.driver.DrivingData;
+import io.sim.simulator.report.AuxEscalonamento;
 
 /**
  *      A classe CarManipulator é responsável por manipular a comunicação com carros que estão realizando rotas o código analisa 
@@ -20,6 +22,10 @@ public class CarManipulator extends Thread {
     private DataOutputStream saida;  // Stream de saída para enviar dados para o carro
 
     private Company company;  // Referência à empresa que gerencia as rotas
+
+    // Atributos escalonamento de sistema em tempo real
+    private int av2Parte;
+    private long startTime;
 
     // Atributos para sincronização
     //private Object sincroniza = new Object();
@@ -36,17 +42,24 @@ public class CarManipulator extends Thread {
         }
 
         //this.sincroniza = new Object();
+
+        // Inicializa startTime e parte de AV2
+        this.av2Parte = App.AV2PARTE;
+        this.startTime = System.currentTimeMillis();
     }
 
     @Override
     public void run() {
         try {
+            long inicio = System.currentTimeMillis();
+
             String StatusDoCarro = "";
             double distancia = 0;
             double distanciaPercorrida = 0;
             int numBytesMsg;
             byte[] mensagemEncriptada;
             boolean sair = false;
+            boolean primeiraVez = true;
 
             // Loop principal para interagir com o carro
             while (!StatusDoCarro.equals("encerrado") && !sair) {
@@ -123,6 +136,12 @@ public class CarManipulator extends Thread {
                 // Estado "encerrado", indica que a thread do carro foi encerrada
                 } else if (StatusDoCarro.equals("encerrado")) {
                     break; // Sai do while imediatamente
+                }
+
+                if ((av2Parte == 2) && primeiraVez) {
+                    AuxEscalonamento aux = new AuxEscalonamento("CarManipulator", 5, startTime, inicio);
+                    aux.start();
+                    primeiraVez = false;
                 }
             }
             

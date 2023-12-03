@@ -8,11 +8,13 @@ import java.util.ArrayList;
 import it.polito.appeal.traci.SumoTraciConnection;
 import de.tudresden.sumo.cmd.Vehicle;
 import de.tudresden.sumo.objects.SumoStringList;
+import io.sim.App;
 import io.sim.simulator.bank.Account;
 import io.sim.simulator.bank.AlphaBank;
 import io.sim.simulator.bank.BotPayment;
 import io.sim.simulator.bank.EndAccount;
 import io.sim.simulator.driver.DrivingData;
+import io.sim.simulator.report.AuxEscalonamento;
 
 public class Company extends Thread {
     // Atributos de Servidor
@@ -35,7 +37,11 @@ public class Company extends Thread {
     private Socket socket;
     private Account account;
     private int alphaBankServerPort;
-    private String alphaBankServerHost; 
+    private String alphaBankServerHost;
+
+    // Atributos escalonamento de sistema em tempo real
+    private int av2Parte;
+    private long startTime;
     
     public Company(ServerSocket serverSocket, ArrayList<Rota> _rotasDisp, int _numDrivers, int _alphaBankServerPort, String _alphaBankServerHost) {
         // Inicializa servidor
@@ -58,11 +64,16 @@ public class Company extends Thread {
         // Atributos como cliente de AlphaBank
         alphaBankServerPort = _alphaBankServerPort;
         alphaBankServerHost = _alphaBankServerHost;
+
+        // Inicializa startTime e parte de AV2
+        this.av2Parte = App.AV2PARTE;
+        this.startTime = System.currentTimeMillis();
     }
 
     @Override
     public void run() {
         try {
+            long inicio = System.currentTimeMillis();
             System.out.println("Company iniciando...");
 
             socket = new Socket(this.alphaBankServerHost, this.alphaBankServerPort);
@@ -72,6 +83,7 @@ public class Company extends Thread {
             System.out.println("Company se conectou ao Servido do AlphaBank!!");
             CompanyAttExcel attExcel = new CompanyAttExcel(this);
 
+            boolean primeiraVez = true;
             while (rotasDisponiveis || !carReports.isEmpty()) {
                 // Pequeno delay para evitar problemas
                 if(!canectandoCars) {
@@ -106,6 +118,12 @@ public class Company extends Thread {
                     }
                     System.out.println("Company: Todos os drivers criados");
                     canectandoCars = false;
+                }
+
+                if ((av2Parte == 2) && primeiraVez) {
+                    AuxEscalonamento aux = new AuxEscalonamento("Company", 1, startTime, inicio);
+                    aux.start();
+                    primeiraVez = false;
                 }
 
                 //System.out.println(account.getAccountID() + " tem R$" + account.getSaldo() + " de saldo");

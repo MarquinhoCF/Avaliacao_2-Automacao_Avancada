@@ -1,11 +1,13 @@
 package io.sim.simulator.driver;
 
+import io.sim.App;
 import io.sim.simulator.bank.Account;
 import io.sim.simulator.bank.AlphaBank;
 import io.sim.simulator.bank.BotPayment;
 import io.sim.simulator.bank.EndAccount;
 import io.sim.simulator.company.Rota;
 import io.sim.simulator.fuelStation.FuelStation;
+import io.sim.simulator.report.AuxEscalonamento;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -33,6 +35,10 @@ public class Driver extends Thread {
     private boolean initRoute = false;
     private long saldoInicial;
 
+     // Atributos escalonamento de sistema em tempo real
+     private int av2Parte;
+     private long startTime;
+
     private FuelStation postoCombustivel;
 
     public Driver(String _driverID, Car _car, long _taxaAquisicao, FuelStation _postoCombustivel, int _alphaBankServerPort, String _alphaBankServerHost) {
@@ -46,12 +52,17 @@ public class Driver extends Thread {
         this.alphaBankServerPort = _alphaBankServerPort;
         this.alphaBankServerHost = _alphaBankServerHost;
         this.postoCombustivel = _postoCombustivel;
+
+        // Inicializa startTime e parte de AV2
+        this.av2Parte = App.AV2PARTE;
+        this.startTime = System.currentTimeMillis();
     }
 
     @Override
     public void run() {
         try {
             System.out.println("Iniciando " + this.driverID);
+            long inicio = System.currentTimeMillis();
 
             // Estabelece uma conexão com o servidor AlphaBank
             socket = new Socket(this.alphaBankServerHost, this.alphaBankServerPort);
@@ -67,6 +78,7 @@ public class Driver extends Thread {
             threadCar.start();
 
             // Loop principal da execução do motorista
+            boolean primeiraVez = true;
             while(threadCar.isAlive()) {
                 Thread.sleep(taxaAquisicao);
 
@@ -104,6 +116,12 @@ public class Driver extends Thread {
                         // Se o carro não tiver dinheiro para abastecer ele fica parado pra sempre
                         System.out.println("/////////////////////////////////////// " + driverID + " NÃO TEM DINHEIRO PRA ABASTECER!!");
                     }
+                }
+
+                if ((av2Parte == 2) && primeiraVez) {
+                    AuxEscalonamento aux = new AuxEscalonamento("Driver", 3, startTime, inicio);
+                    aux.start();
+                    primeiraVez = false;
                 }
             }
 

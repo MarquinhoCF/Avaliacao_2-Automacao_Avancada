@@ -11,10 +11,12 @@ import it.polito.appeal.traci.SumoTraciConnection;
 import de.tudresden.sumo.objects.SumoColor;
 import de.tudresden.sumo.objects.SumoPosition2D;
 import de.tudresden.sumo.objects.SumoStringList;
+import io.sim.App;
 import io.sim.simulator.company.Company;
 import io.sim.simulator.company.Rota;
 import io.sim.simulator.comunication.AESencrypt;
 import io.sim.simulator.comunication.JSONConverter;
+import io.sim.simulator.report.AuxEscalonamento;
 
 /**
  * 		A classe Car representa um veículo autônomo que se move em um ambiente de simulação.
@@ -56,15 +58,17 @@ public class Car extends Vehicle implements Runnable {
 	private double latAtual;           		// Latitude atual.
 	private double lonAtual;           		// Longitude atual.
 	private int precisaAttExcel;
-	private int av2Parte;
 	private DrivingData drivingDataAtual; 	// Dados de condução atuais do veículo.
 	private ArrayList<DrivingData> drivingRepport; // Dados de condução registrados.
 	private TransportService ts;      		// Serviço de transporte associado ao veículo.
 
+	// Atributos escalonamento de sistema em tempo real
+    private int av2Parte;
+    private long startTime;
 
 	public Car(boolean _on_off, String _idCar, SumoColor _colorCar, String _driverID, SumoTraciConnection _sumo, long _acquisitionRate,
 			int _fuelType, int _fuelPreferential, double _fuelPrice, boolean _considerarConsumoComb, int _personCapacity, int _personNumber, String _companyServerHost, 
-			int _companyServerPort, int _av2Parte) throws Exception {
+			int _companyServerPort) throws Exception {
 
 		this.companyServerPort = _companyServerPort;
 		this.companyServerHost = _companyServerHost;
@@ -100,7 +104,10 @@ public class Car extends Vehicle implements Runnable {
 		this.carStatus = "esperando";
 		this.drivingRepport = new ArrayList<DrivingData>();
 		this.precisaAttExcel = 0;
-		this.av2Parte = _av2Parte;
+
+		// Inicializa startTime e parte de AV2
+        this.av2Parte = App.AV2PARTE;
+        this.startTime = System.currentTimeMillis();
 		
 		this.drivingDataAtual = new DrivingData(idCar, driverID, "esperando", 0, 0, 0, 0,  precisaAttExcel,
 												0 , "", 0, 0, 0, this.fuelType, 0);
@@ -108,7 +115,9 @@ public class Car extends Vehicle implements Runnable {
 
 	@Override
 	public void run() {
+		long inicio = System.currentTimeMillis();
 		System.out.println(this.idCar + " iniciando");
+
 		// Inicializa a Thread responsável por gastar o combustível do carro
 		if (considerarConsumoComb) {
 			SpendFuel sf = new SpendFuel(this);
@@ -126,6 +135,7 @@ public class Car extends Vehicle implements Runnable {
 			byte[] mensagemEncriptada;
 
 			// Loop principal do sistema
+			boolean primeiraVez = true;
 			while (!encerrado) {
 				// Manda "esperando" da primeira vez, e espera o recebimento de uma rota
 				mensagemEncriptada = AESencrypt.encripta(JSONConverter.criarJSONDrivingData(drivingDataAtual));
@@ -255,6 +265,12 @@ public class Car extends Vehicle implements Runnable {
 								edgeAtual = (String) this.sumo.do_job_get(Vehicle.getRoadID(this.idCar)); // TODO: ERRO FREQUENTE AQUI
 							}
 						}
+					}
+
+					if ((av2Parte == 2) && primeiraVez) {
+						AuxEscalonamento aux = new AuxEscalonamento("Car", 4, startTime, inicio);
+						aux.start();
+						primeiraVez = false;
 					}
 				}
 				System.out.println(this.idCar + " off.");

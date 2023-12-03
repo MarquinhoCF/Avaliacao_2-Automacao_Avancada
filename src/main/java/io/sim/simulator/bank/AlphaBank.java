@@ -5,6 +5,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import io.sim.App;
+import io.sim.simulator.report.AuxEscalonamento;
+
 /**
  *      A classe AlphaBank é responsável por criar e gerenciar threads de manipulação de contas, controlar as operações de 
  * transferência de fundos e manter registros de transações pendentes. Além disso, lida com a adição e remoção de contas 
@@ -23,17 +26,26 @@ public class AlphaBank extends Thread {
     // Atributo de sincronização
     private Object sincroniza;
 
+    // Atributos escalonamento de sistema em tempo real
+    private int av2Parte;
+    private long startTime;
+
     public AlphaBank(int numClientes, ServerSocket serverSocket) throws IOException {
         this.numClientes = numClientes;
         this.serverAlphaBank = serverSocket;
         accounts = new ArrayList<Account>();
         registrosPendentes = new ArrayList<TransferData>();
         this.sincroniza = new Object();
+
+        // Inicializa startTime e parte de AV2
+        this.av2Parte = App.AV2PARTE;
+        this.startTime = System.currentTimeMillis();
     }
 
     @Override
     public void run() {
         try {
+            long inicio = System.currentTimeMillis();
             System.out.println("AlphaBank iniciado. Aguardando conexões...");
             AlphaBankAttExcel attExcel = new AlphaBankAttExcel(this);
             boolean primeiraVez = true;
@@ -51,6 +63,11 @@ public class AlphaBank extends Thread {
                 // Inicializa a atualização das planilhas Excel apenas na primeira execução
                 if (primeiraVez) {
                     attExcel.start();
+                    if (av2Parte == 2) {
+                        AuxEscalonamento aux = new AuxEscalonamento("AlphaBank", 2, startTime, inicio);
+                        aux.start();
+                        primeiraVez = false;
+                    }
                     primeiraVez = false;
                 }
             }
