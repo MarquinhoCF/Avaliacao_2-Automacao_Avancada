@@ -1,7 +1,6 @@
 package io.sim;
 
-
-import io.sim.reconciliation.CalcularEstatisticas;
+// import io.sim.reconciliation.CalcularEstatisticas;
 import io.sim.simulator.simulation.EnvSimulator;
 
 /**
@@ -25,9 +24,9 @@ public class App {
             e.printStackTrace();
         }
 
-        CalcularEstatisticas calc = new CalcularEstatisticas(taxaAquisicao, numeroDeAmostras);
-        calc.start();
-        calc.join();
+        // CalcularEstatisticas calc = new CalcularEstatisticas(taxaAquisicao, numeroDeAmostras);
+        // calc.start();
+        // calc.join();
 
         System.out.println("Encerando APP!");
         System.exit(0);

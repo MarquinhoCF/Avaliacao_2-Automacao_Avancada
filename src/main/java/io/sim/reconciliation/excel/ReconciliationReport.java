@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class ReconciliationReport {
 
@@ -88,6 +89,29 @@ public class ReconciliationReport {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    // Adiciona os pares de valores de dois ArrayLists a uma linha específica
+    public static ArrayList<Double> extraiValoresDaLinhaTimeDistance(int linha, int numeroParticoes) {
+        ArrayList<Double> dadosLinha = new ArrayList<>();
+
+        try (Workbook workbook = WorkbookFactory.create(new FileInputStream(fileName))) {
+            Sheet sheet = workbook.getSheetAt(0);
+            Row row = sheet.getRow(linha);
+
+            if (row != null) {
+                Iterator<Cell> cellIterator = row.cellIterator();
+
+                while (cellIterator.hasNext()) {
+                    Cell cell = cellIterator.next();
+                    dadosLinha.add(cell.getNumericCellValue());
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return dadosLinha;
     }
 
     // Adiciona uma nova sheet com o cabeçalho especificado

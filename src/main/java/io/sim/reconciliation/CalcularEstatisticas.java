@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -20,16 +21,17 @@ import io.sim.reconciliation.excel.ReconciliationReport;
 
 public class CalcularEstatisticas extends Thread {
 
-	private long taxaAquisicao;
-	private int numeroDeAmostras;
+	private static long taxaAquisicao = 40;
+	private static int numeroDeAmostras = 100;
 
 	public CalcularEstatisticas(long _taxaAquisicao, int _numeroDeAmostras) {
-		this.taxaAquisicao = _taxaAquisicao;
-		this.numeroDeAmostras = _numeroDeAmostras;
+		// this.taxaAquisicao = _taxaAquisicao;
+		// this.numeroDeAmostras = _numeroDeAmostras;
 	}
 
-	@Override
-    public void run() {
+	// @Override
+    // public void run() {
+	public static void main(String[] args) {
 		try {
 			System.out.println("\n\n======== Preparando os dados para a Realização da Reconciliação de Dados ========");
 			
@@ -73,7 +75,7 @@ public class CalcularEstatisticas extends Thread {
 			calcularEstatisticas1(numeroParticoes, todosOsT, todosOsD);
 
 			System.out.println("\nFazendo a Reconciliação de Dados para os tempos e distâncias...");
-			preparaReconciliacao();
+			preparaReconciliacao(numeroParticoes);
 
 			System.out.println("\nCalculando as estatísticas...");
 			calcularEstatisticas2(numeroParticoes);
@@ -90,7 +92,7 @@ public class CalcularEstatisticas extends Thread {
         }
 	}
 
-	private int calculaNumeroParticoes(String xmlPath) {
+	private static int calculaNumeroParticoes(String xmlPath) {
 		try {
 			// Configurando as classes necessárias para a análise do documento XML
 			File xmlFile = new File(xmlPath);
@@ -131,7 +133,7 @@ public class CalcularEstatisticas extends Thread {
 		return 0;
 	}
 
-	private void calcularParciais(int numeroParticoes, ArrayList<Double> timeStamps, ArrayList<Double> distancias) {
+	private static void calcularParciais(int numeroParticoes, ArrayList<Double> timeStamps, ArrayList<Double> distancias) {
 		for (int i = 1; i <= numeroDeAmostras; i++) {
 			ArrayList<Double> temposParciais = new ArrayList<>();
 			ArrayList<Double> distanciasParciais = new ArrayList<>();
@@ -156,7 +158,7 @@ public class CalcularEstatisticas extends Thread {
 		}
 	}
 
-	private void calcularEstatisticas1(int numeroParticoes, ArrayList<ArrayList<Double>> todosOsT, ArrayList<ArrayList<Double>> todosOsD) {
+	private static void calcularEstatisticas1(int numeroParticoes, ArrayList<ArrayList<Double>> todosOsT, ArrayList<ArrayList<Double>> todosOsD) {
 		// Calculando as médias
 		ArrayList<Double> mediaT = new ArrayList<>();
 		ArrayList<Double> mediaD = new ArrayList<>();
@@ -205,11 +207,20 @@ public class CalcularEstatisticas extends Thread {
 		ReconciliationReport.escreverDadosColunaReconciliation(1, 11, desvioPadraoD);
 	}
 
-    private void preparaReconciliacao() {
+    private static void preparaReconciliacao(int numeroParticoes) {
+		// Obtendo os dados de uma medição randomica
+        // Gerando um número aleatório entre 1 e 100
+		Random random = new Random();
+        int amostraAleatoria = random.nextInt(100) + 1;
+		ArrayList<Double> dadosLinha = ReconciliationReport.extraiValoresDaLinhaTimeDistance(amostraAleatoria + 1, numeroParticoes);
+
 		// Fazendo a Reconciliação para os tempos:
-		ArrayList<Double> mediasT = ReconciliationReport.lerColunaReconciliation(1, 1);
+		ArrayList<Double> medidaBrutaT = new ArrayList<Double>();
+		for (int i = 0; i < dadosLinha.size(); i += 2) {
+			medidaBrutaT.add(dadosLinha.get(i));
+		}
 		ArrayList<Double> desvioPadraoT = ReconciliationReport.lerColunaReconciliation(1, 2);
-		Reconciliation ReconciliacaoT = reconciliacao(mediasT, desvioPadraoT);
+		Reconciliation ReconciliacaoT = reconciliacao(medidaBrutaT, desvioPadraoT);
 		double[] Treconciliado = ReconciliacaoT.getReconciledFlow();
 		ArrayList<Double> Trec = new ArrayList<>();
 		for (double t : Treconciliado) {
@@ -218,9 +229,13 @@ public class CalcularEstatisticas extends Thread {
 		Trec.remove(Trec.size() - 1); // Remove o lixo que ficou acumulado no vetor para que ele não seja escrito no Excel
 		ReconciliationReport.escreverDadosColunaReconciliation(1, 3, Trec);
 		
-		ArrayList<Double> mediasD = ReconciliationReport.lerColunaReconciliation(1, 10);
+		// Fazendo a Reconciliação para as distâncias:
+		ArrayList<Double> medidaBrutaD = new ArrayList<Double>();
+		for (int i = 1; i < dadosLinha.size(); i += 2) {
+			medidaBrutaD.add(dadosLinha.get(i));
+		}
 		ArrayList<Double> desvioPadraoD = ReconciliationReport.lerColunaReconciliation(1, 11);
-		Reconciliation ReconciliacaoD = reconciliacao(mediasD, desvioPadraoD);
+		Reconciliation ReconciliacaoD = reconciliacao(medidaBrutaD, desvioPadraoD);
 		double[] Dreconciliado = ReconciliacaoD.getReconciledFlow();
 		ArrayList<Double> Drec = new ArrayList<>();
 		for (double t : Dreconciliado) {
@@ -230,7 +245,7 @@ public class CalcularEstatisticas extends Thread {
 		ReconciliationReport.escreverDadosColunaReconciliation(1, 12, Drec);
 	}
 
-	private Reconciliation reconciliacao(ArrayList<Double> medias, ArrayList<Double> desvioPadrao) {
+	private static Reconciliation reconciliacao(ArrayList<Double> medias, ArrayList<Double> desvioPadrao) {
 		int tam = medias.size();
 		double[] y = new double[tam];
 		for (int i = 0; i < tam; i++) {
@@ -254,7 +269,7 @@ public class CalcularEstatisticas extends Thread {
 		return rec;
 	}
 
-	private void calcularEstatisticas2(int numeroParticoes) {
+	private static void calcularEstatisticas2(int numeroParticoes) {
 		// Obtendo os dados de Statistics
 		ArrayList<Double> mediaT = ReconciliationReport.lerColunaReconciliation(1, 1);
 		ArrayList<Double> mediaD = ReconciliationReport.lerColunaReconciliation(1, 10);
@@ -294,7 +309,7 @@ public class CalcularEstatisticas extends Thread {
 		ReconciliationReport.escreverDadosColunaReconciliation(1, 15, incertezaD);
 	}
 
-	private void calculaVelocidade(int numeroParticoes) {
+	private static void calculaVelocidade(int numeroParticoes) {
 		ArrayList<Double> Treconciliado = ReconciliationReport.lerColunaReconciliation(1, 3);
 		ArrayList<Double> Dreconciliado = ReconciliationReport.lerColunaReconciliation(1, 12);
 		ArrayList<Double> incertezaT = ReconciliationReport.lerColunaReconciliation(1, 6);
