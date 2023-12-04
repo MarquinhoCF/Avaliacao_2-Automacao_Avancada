@@ -2,12 +2,12 @@ package io.sim.processing.scheduling.excel;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import io.sim.App;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 public class RelatorioEscalonamento {
     private static String fileName = "RelatorioEscalonamento.xlsx";
@@ -54,43 +54,41 @@ public class RelatorioEscalonamento {
     public synchronized static void registrarTempo(String nome, int numeroTarefa, long startTime, long inicio, long fim, long estimativaManualDi) {
         synchronized (RelatorioEscalonamento.class) {
             String nomeTarefa = "T" + numeroTarefa;
-            
-            long Ji = TimeUnit.MILLISECONDS.toSeconds(startTime);
-            long Ci = TimeUnit.MILLISECONDS.toSeconds(fim);
-            long tempoProcessamento = fim - inicio;
-            double Di = estimativaManualDi;
-        
-            // Escrever os valores na planilha
-            try (Workbook workbook = WorkbookFactory.create(new FileInputStream(fileName))) {
+
+            long Ji = startTime - App.TEMPOINICIOGERAL; // Tempo de chegada, mantido como está
+            long Ci = fim - inicio; // Tempo de conclusão em milissegundos
+            long tempoProcessamento = fim - startTime; // Tempo de processamento em milissegundos
+            double Di = estimativaManualDi; // Mantenha Di como está, assumindo que já está em milissegundos
+
+            try (FileInputStream fileInputStream = new FileInputStream(fileName)) {
+                Workbook workbook = WorkbookFactory.create(fileInputStream);
                 Sheet sheet = workbook.getSheet("Tabela de Tarefas");
-        
-                // Verifica se a linha já existe, se não, cria uma nova
+
                 Row row = sheet.getRow(numeroTarefa);
                 if (row == null) {
                     row = sheet.createRow(numeroTarefa);
                     row.createCell(0).setCellValue(nomeTarefa);
                 }
-        
+
                 Cell cell = row.createCell(1);
                 cell.setCellValue(nome);
 
                 cell = row.createCell(2);
                 cell.setCellValue(Ji);
-                System.out.println(nomeTarefa + " - Tempo de Chegada (Ji): " + Ji);
-        
+                System.out.println(nomeTarefa + " - Tempo de Chegada (Ji): " + Ji + " milisegundos");
+
                 cell = row.createCell(3);
                 cell.setCellValue(Ci);
-                System.out.println(nomeTarefa + " - Tempo de Conclusão (Ci): " + Ci);
-        
+                System.out.println(nomeTarefa + " - Tempo de Conclusão (Ci): " + Ci + " milisegundos");
+
                 cell = row.createCell(4);
                 cell.setCellValue(tempoProcessamento);
                 System.out.println(nomeTarefa + " - Tempo de Processamento (Pi): " + tempoProcessamento + " milisegundos");
-        
+
                 cell = row.createCell(5);
                 cell.setCellValue(Di);
                 System.out.println(nomeTarefa + " - Tempo de Atraso (Di): " + Di + " milisegundos");
-        
-                // Escrever no arquivo
+
                 try (FileOutputStream outputStream = new FileOutputStream(fileName)) {
                     workbook.write(outputStream);
                 } catch (IOException e) {
@@ -103,12 +101,12 @@ public class RelatorioEscalonamento {
     }
 
     public static ArrayList<Double> obterDadosColuna(int coluna) {
-        ArrayList<Double> valores = new ArrayList<Double>();
+        ArrayList<Double> valores = new ArrayList<>();
 
-        try (Workbook workbook = WorkbookFactory.create(new FileInputStream(fileName))) {
+        try (FileInputStream fileInputStream = new FileInputStream(fileName)) {
+            Workbook workbook = WorkbookFactory.create(fileInputStream);
             Sheet sheet = workbook.getSheet("Tabela de Tarefas");
 
-            // Itera sobre as linhas da sheet, começando da segunda linha (índice 1)
             for (int i = 1; i <= sheet.getLastRowNum(); i++) {
                 Row row = sheet.getRow(i);
                 if (row != null) {
@@ -125,5 +123,66 @@ public class RelatorioEscalonamento {
 
         return valores;
     }
-    
+
+    public static void criarAnaliseEscalonamento() {
+        try (FileInputStream fileInputStream = new FileInputStream(fileName)) {
+            Workbook workbook = WorkbookFactory.create(fileInputStream);
+            Sheet sheet = workbook.getSheet("Análise de Escalonamento");
+
+            if (sheet == null) {
+                sheet = workbook.createSheet("Análise de Escalonamento");
+
+                Row row = sheet.createRow(0);
+                row.createCell(0).setCellValue("Tempo de Resposta Máximo");
+
+                row = sheet.createRow(1);
+                row.createCell(0).setCellValue("Utilização do Processador");
+
+                row = sheet.createRow(2);
+                row.createCell(0).setCellValue("Limite de Utilização do Processador");
+
+                row = sheet.createRow(3);
+                row.createCell(0).setCellValue("Escalonável");
+
+                try (FileOutputStream outputStream = new FileOutputStream(fileName)) {
+                    workbook.write(outputStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void adicionarValoresAnaliseEscalonamento(double tempoRespostaMaximo, double utilizacao, double limiteUtilizacao, String escalonavel) {
+        try (FileInputStream fileInputStream = new FileInputStream(fileName)) {
+            Workbook workbook = WorkbookFactory.create(fileInputStream);
+            Sheet sheet = workbook.getSheet("Análise de Escalonamento");
+
+            Row row = sheet.getRow(0);
+            Cell cell = row.createCell(1);
+            cell.setCellValue(tempoRespostaMaximo);
+
+            row = sheet.getRow(1);
+            cell = row.createCell(1);
+            cell.setCellValue(utilizacao);
+
+            row = sheet.getRow(2);
+            cell = row.createCell(1);
+            cell.setCellValue(limiteUtilizacao);
+
+            row = sheet.getRow(3);
+            cell = row.createCell(1);
+            cell.setCellValue(escalonavel);
+
+            try (FileOutputStream outputStream = new FileOutputStream(fileName)) {
+                workbook.write(outputStream);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -33,34 +33,20 @@ public class EscalonadorTempoReal extends Thread {
         System.out.println("Utilização do Processador: " + utilizacaoProcessador);
 
         // Verifica escalonabilidade
-        boolean escalonavel = verificarEscalonabilidade(utilizacaoProcessador, numTarefas, Pi, Di);
-        System.out.println("O conjunto de tarefas é escalonável? " + (escalonavel ? "Sim" : "Não"));
-    }
+        double limiteUtilizacao = calculaLimiteUtilizacao(numTarefas, Pi, Di);
+        RelatorioEscalonamento.criarAnaliseEscalonamento();
 
-    // Método para calcular o tempo de resposta máximo
-    private static double calcularTempoRespostaMaximo(ArrayList<Double> Ri) {
-        double tempoRespostaMaximo = 0;
-        for (double valor : Ri) {
-            tempoRespostaMaximo = Math.max(tempoRespostaMaximo, valor);
+        String escalonavel;
+        if (utilizacaoProcessador <= limiteUtilizacao) {
+            escalonavel = "Sim";
+        } else {
+            escalonavel = "Não";
         }
-        return tempoRespostaMaximo;
-    }
+        System.out.println("O conjunto de tarefas é escalonável? " + escalonavel);
 
-    // Método para verificar escalonabilidade
-    private static boolean verificarEscalonabilidade(double utilizacao, int numTarefas, ArrayList<Double> Pi, ArrayList<Double> Di) {
-        // Adicionando a lógica correta para calcular o limite de utilização
-        double limiteUtilizacao = numTarefas * (Math.pow(2, 1.0 / numTarefas) - 1);
+        RelatorioEscalonamento.adicionarValoresAnaliseEscalonamento(tempoRespostaMaximo, utilizacaoProcessador, limiteUtilizacao, escalonavel);
 
-        // Corrigindo a verificação
-        for (int i = 0; i < numTarefas; i++) {
-            limiteUtilizacao += Di.get(i) / Pi.get(i);
-        }
-
-        System.out.println(limiteUtilizacao);
-        System.out.println(utilizacao);
-        System.out.println(utilizacao <= limiteUtilizacao);
-
-        return utilizacao <= limiteUtilizacao;
+        System.out.println("RelatorioEscalonamento.xlsx criado com sucesso!!");
     }
 
     // Método para calcular o tempo de espera individual (Wi) para cada tarefa
@@ -112,5 +98,27 @@ public class EscalonadorTempoReal extends Thread {
         }
 
         return utilizacao;
+    }
+
+    // Método para calcular o tempo de resposta máximo
+    private static double calcularTempoRespostaMaximo(ArrayList<Double> Ri) {
+        double tempoRespostaMaximo = 0;
+        for (double valor : Ri) {
+            tempoRespostaMaximo = Math.max(tempoRespostaMaximo, valor);
+        }
+        return tempoRespostaMaximo;
+    }
+
+    // Método para verificar escalonabilidade
+    private static double calculaLimiteUtilizacao(int numTarefas, ArrayList<Double> Pi, ArrayList<Double> Di) {
+        // Adicionando a lógica correta para calcular o limite de utilização
+        double limiteUtilizacao = numTarefas * (Math.pow(2, 1.0 / numTarefas) - 1);
+
+        // Corrigindo a verificação
+        for (int i = 0; i < numTarefas; i++) {
+            limiteUtilizacao += Di.get(i) / Pi.get(i);
+        }
+
+        return limiteUtilizacao;
     }
 }

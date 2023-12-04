@@ -1,6 +1,6 @@
 package io.sim.processing;
 
-import io.sim.processing.reconciliation.CalcularEstatisticas;
+// import io.sim.processing.reconciliation.CalcularEstatisticas;
 import io.sim.processing.scheduling.EscalonadorTempoReal;
 
 public class AuxiliarAV2Parte1 {

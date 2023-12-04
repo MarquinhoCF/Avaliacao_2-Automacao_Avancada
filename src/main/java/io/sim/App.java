@@ -1,6 +1,7 @@
 package io.sim;
 
 import io.sim.processing.reconciliation.CalcularEstatisticas;
+import io.sim.processing.scheduling.EscalonadorTempoReal;
 import io.sim.simulator.simulation.EnvSimulator;
 
 /**
@@ -8,10 +9,11 @@ import io.sim.simulator.simulation.EnvSimulator;
  */
 public class App {
     public static final int AV2PARTE = 2;
+    public static final long TEMPOINICIOGERAL = System.currentTimeMillis();
 
     public static void main(String[] args) throws InterruptedException {
 	    // Escolha os parâmetros de controle aqui:
-        long taxaAquisicao = 300;
+        long taxaAquisicao = 200;
         boolean considerarConsumoComb = true;
         int numeroDeAmostras = 100;
 
@@ -45,6 +47,10 @@ public class App {
             CalcularEstatisticas calc = new CalcularEstatisticas(taxaAquisicao, numeroDeAmostras);
             calc.start();
             calc.join();
+        } else {
+            EscalonadorTempoReal esc = new EscalonadorTempoReal();
+            esc.start();
+            esc.join();
         }
 
         System.out.println("Encerando APP!");
