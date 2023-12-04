@@ -65,6 +65,7 @@ public class Car extends Vehicle implements Runnable {
 	// Atributos escalonamento de sistema em tempo real
     private int av2Parte;
     private long startTime;
+	private long estimativaManualDi = 850;
 
 	public Car(boolean _on_off, String _idCar, SumoColor _colorCar, String _driverID, SumoTraciConnection _sumo, long _acquisitionRate,
 			int _fuelType, int _fuelPreferential, double _fuelPrice, boolean _considerarConsumoComb, int _personCapacity, int _personNumber, String _companyServerHost, 
@@ -268,7 +269,7 @@ public class Car extends Vehicle implements Runnable {
 					}
 
 					if ((av2Parte == 2) && primeiraVez) {
-						AuxEscalonamento aux = new AuxEscalonamento("Car", 4, startTime, inicio);
+						AuxEscalonamento aux = new AuxEscalonamento("Car", 4, startTime, inicio, estimativaManualDi);
 						aux.start();
 						primeiraVez = false;
 					}

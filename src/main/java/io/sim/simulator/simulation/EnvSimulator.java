@@ -5,12 +5,12 @@ import java.net.ServerSocket;
 import java.util.ArrayList;
 
 import io.sim.App;
+import io.sim.processing.scheduling.excel.RelatorioEscalonamento;
 import io.sim.simulator.bank.AlphaBank;
 import io.sim.simulator.company.Company;
 import io.sim.simulator.company.Rota;
 import io.sim.simulator.driver.Driver;
 import io.sim.simulator.fuelStation.FuelStation;
-import io.sim.simulator.report.EscalonamentoTempoReal;
 import io.sim.simulator.report.ExcelReport;
 import it.polito.appeal.traci.SumoTraciConnection;
 
@@ -79,7 +79,7 @@ public class EnvSimulator extends Thread {
             if (av2Parte == 2) {
                 av2Parte = 2;
                 rotasDisp = Rota.criaRotasXML(rotasXML);
-                EscalonamentoTempoReal.criarTabelaTarefas();
+                RelatorioEscalonamento.criarTabelaTarefas();
             } else {
                 av2Parte = 1;
                 rotasDisp = Rota.criaArrayRotaAV2(rotasXML, replicacoesRota);

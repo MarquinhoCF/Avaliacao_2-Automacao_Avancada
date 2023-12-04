@@ -42,6 +42,7 @@ public class Company extends Thread {
     // Atributos escalonamento de sistema em tempo real
     private int av2Parte;
     private long startTime;
+    private long estimativaManualDi = 140;
     
     public Company(ServerSocket serverSocket, ArrayList<Rota> _rotasDisp, int _numDrivers, int _alphaBankServerPort, String _alphaBankServerHost) {
         // Inicializa servidor
@@ -121,7 +122,7 @@ public class Company extends Thread {
                 }
 
                 if ((av2Parte == 2) && primeiraVez) {
-                    AuxEscalonamento aux = new AuxEscalonamento("Company", 1, startTime, inicio);
+                    AuxEscalonamento aux = new AuxEscalonamento("Company", 1, startTime, inicio, estimativaManualDi);
                     aux.start();
                     primeiraVez = false;
                 }

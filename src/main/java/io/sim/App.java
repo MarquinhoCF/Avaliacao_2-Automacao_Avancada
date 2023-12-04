@@ -1,6 +1,6 @@
 package io.sim;
 
-import io.sim.processing.CalcularEstatisticas;
+import io.sim.processing.reconciliation.CalcularEstatisticas;
 import io.sim.simulator.simulation.EnvSimulator;
 
 /**
@@ -11,7 +11,7 @@ public class App {
 
     public static void main(String[] args) throws InterruptedException {
 	    // Escolha os parâmetros de controle aqui:
-        long taxaAquisicao = 100;
+        long taxaAquisicao = 300;
         boolean considerarConsumoComb = true;
         int numeroDeAmostras = 100;
 

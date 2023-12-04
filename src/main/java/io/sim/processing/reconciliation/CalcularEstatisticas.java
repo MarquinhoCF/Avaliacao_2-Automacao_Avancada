@@ -1,4 +1,4 @@
-package io.sim.processing;
+package io.sim.processing.reconciliation;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,10 +15,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import io.sim.processing.chart.Grafico;
-import io.sim.processing.excel.LeitorRelatorioCarros;
-import io.sim.processing.excel.ReconciliationReport;
-import io.sim.processing.reconciliation.Reconciliation;
+import io.sim.processing.reconciliation.chart.GraficoDispersao;
+import io.sim.processing.reconciliation.chart.GraficoLinha;
+import io.sim.processing.reconciliation.excel.LeitorRelatorioCarros;
+import io.sim.processing.reconciliation.excel.ReconciliationReport;
 
 public class CalcularEstatisticas extends Thread {
 
@@ -68,7 +68,7 @@ public class CalcularEstatisticas extends Thread {
 			}
 
 			System.out.println("\nPlotando os gráficos de dispersão...");
-			Grafico.plotarGraficosDispersoes(todosOsT, todosOsD);
+			GraficoDispersao.plotarGraficosDispersoes(todosOsT, todosOsD);
 
 			System.out.println("\nCalculando a média e desvio padrão...");
 			ReconciliationReport.adicionaSheetEstatisticas(numeroParticoes);
@@ -85,7 +85,11 @@ public class CalcularEstatisticas extends Thread {
 			calculaVelocidade(numeroParticoes);
 			
 			System.out.println("\nCalculo das velocidades finalizado!!");
-			System.out.println("\nVerifique o relatório ReconciliationReport.xlsx para observá-las");
+			System.out.println("\nPlotando os gráficos das velocidades sugeridas:");
+			ArrayList<Double> velocidadesMpS = ReconciliationReport.lerColunaReconciliation(2, 1);
+			GraficoLinha.plotarGraficoLinha("Velocidade Sugerida para cada fluxo: m/s", velocidadesMpS, "m/s");
+			ArrayList<Double> velocidadesKMpH = ReconciliationReport.lerColunaReconciliation(2, 7);
+			GraficoLinha.plotarGraficoLinha("Velocidade Sugerida para cada fluxo: Km/h", velocidadesKMpH, "Km/h");
 
         } catch (IOException e) {
             e.printStackTrace();

@@ -1,4 +1,4 @@
-package io.sim.processing.auxiliar;
+package io.sim.processing.reconciliation.auxiliar;
 
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;

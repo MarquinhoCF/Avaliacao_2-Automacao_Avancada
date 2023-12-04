@@ -23,6 +23,7 @@ public class Account extends Thread {
     // Atributos escalonamento de sistema em tempo real
     private int av2Parte;
     private long startTime;
+    private long estimativaManualDi = 2030;
 
     public Account(String _accountID, String _senha, double _saldo) {
         this.accountID = _accountID; // Inicializa a identificação da conta
@@ -53,7 +54,7 @@ public class Account extends Thread {
                 }
 
                 if ((av2Parte == 2) && primeiraVez) {
-                    AuxEscalonamento aux = new AuxEscalonamento("Account", 10, startTime, inicio);
+                    AuxEscalonamento aux = new AuxEscalonamento("Account", 10, startTime, inicio, estimativaManualDi);
                     aux.start();
                     primeiraVez = false;
                 }

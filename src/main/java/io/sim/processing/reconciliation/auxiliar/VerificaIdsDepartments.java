@@ -1,4 +1,4 @@
-package io.sim.processing.auxiliar;
+package io.sim.processing.reconciliation.auxiliar;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;

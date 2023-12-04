@@ -16,6 +16,7 @@ public class SpendFuel extends Thread {
     // Atributos escalonamento de sistema em tempo real
     private int av2Parte;
     private long startTime;
+    private long estimativaManualDi = 1240;
 
     public SpendFuel(Car _car) {
         this.car = _car;
@@ -48,7 +49,7 @@ public class SpendFuel extends Thread {
                     Thread.sleep(1000); // Aguarde 1 segundo antes de verificar novamente
                     
                     if ((av2Parte == 2) && primeiraVez) {
-                        AuxEscalonamento aux = new AuxEscalonamento("SpendFuel", 9, startTime, inicio);
+                        AuxEscalonamento aux = new AuxEscalonamento("SpendFuel", 9, startTime, inicio, estimativaManualDi);
                         aux.start();
                         primeiraVez = false;
                     }

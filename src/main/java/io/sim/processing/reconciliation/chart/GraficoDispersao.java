@@ -1,4 +1,4 @@
-package io.sim.processing.chart;
+package io.sim.processing.reconciliation.chart;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
@@ -14,12 +14,12 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
 
-public class Grafico extends ApplicationFrame {
+public class GraficoDispersao extends ApplicationFrame {
     private JFreeChart chart;
     private XYSeries series;
     private XYSeriesCollection dataset;
 
-    public Grafico(String title) {
+    public GraficoDispersao(String title) {
         super(title);
         series = new XYSeries("Data");
         dataset = new XYSeriesCollection(series);
@@ -70,7 +70,7 @@ public class Grafico extends ApplicationFrame {
         double minY = yData.stream().mapToDouble(Double::doubleValue).min().orElse(0) - 25;
         double maxY = yData.stream().mapToDouble(Double::doubleValue).max().orElse(10) + 25;
 
-        Grafico scatterPlot = new Grafico(title);
+        GraficoDispersao scatterPlot = new GraficoDispersao(title);
         for (int j = 0; j < xData.size(); j++) {
             scatterPlot.addData(xData.get(j), yData.get(j));
         }
@@ -83,8 +83,8 @@ public class Grafico extends ApplicationFrame {
         XYItemRenderer renderer = plot.getRenderer();
 
         // Definindo a cor dos pontos
-        ChartColor randomColor = new ChartColor(14, 18, 77);
-        renderer.setSeriesPaint(0, randomColor);
+        ChartColor color = new ChartColor(14, 18, 77);
+        renderer.setSeriesPaint(0, color);
 
         scatterPlot.pack();
         scatterPlot.setVisible(true);

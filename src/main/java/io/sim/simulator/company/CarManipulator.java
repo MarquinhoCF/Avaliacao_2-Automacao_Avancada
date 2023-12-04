@@ -26,6 +26,7 @@ public class CarManipulator extends Thread {
     // Atributos escalonamento de sistema em tempo real
     private int av2Parte;
     private long startTime;
+    private long estimativaManualDi = 100;
 
     // Atributos para sincronização
     //private Object sincroniza = new Object();
@@ -139,7 +140,7 @@ public class CarManipulator extends Thread {
                 }
 
                 if ((av2Parte == 2) && primeiraVez) {
-                    AuxEscalonamento aux = new AuxEscalonamento("CarManipulator", 5, startTime, inicio);
+                    AuxEscalonamento aux = new AuxEscalonamento("CarManipulator", 5, startTime, inicio, estimativaManualDi);
                     aux.start();
                     primeiraVez = false;
                 }

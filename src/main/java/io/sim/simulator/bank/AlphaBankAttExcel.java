@@ -15,6 +15,7 @@ public class AlphaBankAttExcel extends Thread {
     // Atributos escalonamento de sistema em tempo real
     private int av2Parte;
     private long startTime;
+    private long estimativaManualDi = 25;
 
     public AlphaBankAttExcel(AlphaBank _alphaBank) {
         this.alphaBank = _alphaBank;
@@ -42,7 +43,7 @@ public class AlphaBankAttExcel extends Thread {
                 }
 
                 if ((av2Parte == 2) && primeiraVez) {
-                    AuxEscalonamento aux = new AuxEscalonamento("AlphaBankAttExcel", 7, startTime, inicio);
+                    AuxEscalonamento aux = new AuxEscalonamento("AlphaBankAttExcel", 7, startTime, inicio, estimativaManualDi);
                     aux.start();
                     primeiraVez = false;
                 }

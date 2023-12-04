@@ -13,6 +13,7 @@ public class ExecutaSimulador extends Thread {
     // Atributos escalonamento de sistema em tempo real
     private int av2Parte;
     private long startTime;
+    private long estimativaManualDi = 330;
 
     public ExecutaSimulador(SumoTraciConnection _sumo, long _taxaAquisicao) {
         this.sumo = _sumo;
@@ -42,7 +43,7 @@ public class ExecutaSimulador extends Thread {
             }
 
             if ((av2Parte == 2) && primeiraVez) {
-                AuxEscalonamento aux = new AuxEscalonamento("ExecutaSimulador", 8, startTime, inicio);
+                AuxEscalonamento aux = new AuxEscalonamento("ExecutaSimulador", 8, startTime, inicio, estimativaManualDi);
                 aux.start();
                 primeiraVez = false;
             }

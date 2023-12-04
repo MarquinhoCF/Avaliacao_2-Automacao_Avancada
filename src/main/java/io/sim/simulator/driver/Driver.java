@@ -35,9 +35,10 @@ public class Driver extends Thread {
     private boolean initRoute = false;
     private long saldoInicial;
 
-     // Atributos escalonamento de sistema em tempo real
-     private int av2Parte;
-     private long startTime;
+    // Atributos escalonamento de sistema em tempo real
+    private int av2Parte;
+    private long startTime;
+    private long estimativaManualDi = 330;
 
     private FuelStation postoCombustivel;
 
@@ -119,7 +120,7 @@ public class Driver extends Thread {
                 }
 
                 if ((av2Parte == 2) && primeiraVez) {
-                    AuxEscalonamento aux = new AuxEscalonamento("Driver", 3, startTime, inicio);
+                    AuxEscalonamento aux = new AuxEscalonamento("Driver", 3, startTime, inicio, estimativaManualDi);
                     aux.start();
                     primeiraVez = false;
                 }

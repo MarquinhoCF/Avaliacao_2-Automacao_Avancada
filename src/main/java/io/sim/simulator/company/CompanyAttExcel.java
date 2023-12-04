@@ -15,6 +15,7 @@ public class CompanyAttExcel extends Thread {
     // Atributos escalonamento de sistema em tempo real
     private int av2Parte;
     private long startTime;
+    private long estimativaManualDi = 90;
 
     public CompanyAttExcel(Company _company) {
         this.company = _company;
@@ -43,7 +44,7 @@ public class CompanyAttExcel extends Thread {
                 }
 
                 if ((av2Parte == 2) && primeiraVez && escreveuUmaVez) {
-                    AuxEscalonamento aux = new AuxEscalonamento("CompanyAttExcel", 6, startTime, inicio);
+                    AuxEscalonamento aux = new AuxEscalonamento("CompanyAttExcel", 6, startTime, inicio, estimativaManualDi);
                     aux.start();
                     primeiraVez = false;
                     escreveuUmaVez = false;
