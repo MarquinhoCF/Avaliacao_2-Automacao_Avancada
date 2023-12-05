@@ -6,7 +6,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+/**
+ * A classe VerificaIdsDepartments é responsável por verificar se há IDs e departamentos idênticos
+ * nos elementos "vehicle" de um arquivo XML de rotas de veículos (map.rou.xml).
+ */
 public class VerificaIdsDepartments {
+
+    //      Método principal que carrega o arquivo XML, extrai IDs e departamentos dos elementos "vehicle" 
+    // e verifica se há IDs e departamentos idênticos.
     public static void main(String[] args) {
         try {
             // Carrega o arquivo XML

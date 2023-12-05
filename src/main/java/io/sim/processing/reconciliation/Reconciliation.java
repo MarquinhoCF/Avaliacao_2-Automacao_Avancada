@@ -3,6 +3,10 @@ package io.sim.processing.reconciliation;
 import org.ejml.data.DMatrixRMaj;
 import org.ejml.simple.SimpleMatrix;
 
+/**
+ * A classe Reconciliation é responsável por realizar reconciliação estatística usando o método dos mínimos quadrados ponderados.
+ * Ela utiliza a biblioteca EJML (Efficient Java Matrix Library) para manipulação de matrizes e vetores.
+ */
 public class Reconciliation {
 
 	private double[] reconciledFlowDouble;
@@ -15,6 +19,7 @@ public class Reconciliation {
 	private SimpleMatrix diagonalMatrix;
 	private SimpleMatrix weightsArray;
 
+	// Construtor para a reconciliação estatística baseada em matrizes.
 	public Reconciliation(double[] _rawMeasurement, double[] _standardDeviation, double[][] _incidenceMatrix) {
 
 		if ((_rawMeasurement != null) && (_standardDeviation != null) && (_incidenceMatrix != null)) {
@@ -54,6 +59,7 @@ public class Reconciliation {
 		}
 	}
 
+	// Construtor alternativo para a reconciliação estatística baseada em vetores.
 	public Reconciliation(double[] _rawMeasurement, double[] _standardDeviation, double[] _incidenceMatrix) {
 
 		if ((_rawMeasurement != null) && (_standardDeviation != null) && (_incidenceMatrix != null)) {
@@ -91,6 +97,7 @@ public class Reconciliation {
 		}
 	}
 
+	// Método para imprimir uma matriz bidimensional.
 	public void printMatrix(double[][] _m) {
 
 		if (_m != null) {
@@ -108,6 +115,7 @@ public class Reconciliation {
 		}
 	}
 
+	// Método para imprimir um vetor unidimensional.
 	public void printMatrix(double[] _m) {
 
 		if (_m != null) {
@@ -121,34 +129,42 @@ public class Reconciliation {
 		}
 	}
 
+	// Obtém o vetor de fluxo reconciliado.
 	public double[] getReconciledFlow() {
 		return this.reconciledFlowDouble;
 	}
 
+	// Obtém a matriz de ajuste.
 	public SimpleMatrix getAdjustment() {
 		return this.adjustment;
 	}
 
+	// Obtém a matriz de medições brutas.
 	public SimpleMatrix getRawMeasurement() {
 		return this.rawMeasurement;
 	}
 
+	// Obtém a matriz de desvios padrão associados às medições.
 	public SimpleMatrix getStandardDeviation() {
 		return this.standardDeviation;
 	}
 
+	// Obtém a matriz de variância.
 	public SimpleMatrix getVarianceMatrix() {
 		return this.varianceMatrix;
 	}
 
+	// Obtém a matriz de incidência.
 	public SimpleMatrix getIncidenceMatrix() {
 		return this.incidenceMatrix;
 	}
 
+	// Obtém a matriz diagonal.
 	public SimpleMatrix getDiagonalMatrix() {
 		return this.diagonalMatrix;
 	}
 
+	// Obtém o vetor de pesos.
 	public SimpleMatrix getWeightsArray() {
 		return this.weightsArray;
 	}

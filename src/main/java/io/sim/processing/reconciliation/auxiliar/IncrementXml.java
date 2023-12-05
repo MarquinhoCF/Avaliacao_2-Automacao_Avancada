@@ -10,8 +10,13 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * A classe IncrementXml é responsável por realizar incrementos nos valores dos atributos "id" e "depart"
+ * nos elementos "vehicle" de um arquivo XML de rotas de veículos (map.rou.xml).
+ */
 public class IncrementXml {
 
+    // Método principal que realiza os incrementos nos valores dos atributos "id" e "depart" nos elementos "vehicle".
     public static void main(String[] args) {
         // Substitua esses valores pelos incrementos desejados para id e depart
         int startingId = 7981;
@@ -67,6 +72,7 @@ public class IncrementXml {
         }
     }
 
+    // Método privado para salvar o documento XML modificado em um novo arquivo.
     private static void saveXmlDocument(Document document, String filePath) throws TransformerException {
         // Salva o documento modificado em um novo arquivo
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -76,4 +82,3 @@ public class IncrementXml {
         transformer.transform(source, result);
     }
 }
-

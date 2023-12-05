@@ -17,12 +17,16 @@ import org.jfree.chart.plot.ValueMarker;
 import java.awt.BasicStroke;
 import java.awt.Color;
 
+/**
+ * A classe GraficoLinha representa um gráfico de linha utilizando a biblioteca JFreeChart.
+ * Permite a criação de gráficos com dados de fluxos e velocidade.
+ */
 public class GraficoLinha extends ApplicationFrame {
     private JFreeChart chart;
     private XYSeries series;
     private XYSeriesCollection dataset;
 
-    // Construtor
+    // Construtor da classe GraficoLinha.
     public GraficoLinha(String title, String unidadeMedida) {
         super(title);
         series = new XYSeries("Data");
@@ -46,17 +50,17 @@ public class GraficoLinha extends ApplicationFrame {
         setContentPane(chartPanel);
     }
 
-    // Método para obter o gráfico
+    // Obtém o gráfico gerado.
     public JFreeChart getChart() {
         return chart;
     }
 
-    // Método para adicionar dados ao gráfico
+    // Adiciona dados ao gráfico.
     public void addData(double x, double y) {
         series.add(x + 1, y); // Ajuste para começar a partir de 1
     }
 
-    // Método estático para plotar o gráfico de linha com a média
+    // Método estático para plotar gráfico de linha com média.
     public static void plotarGraficoLinha(String titulo, ArrayList<Double> dados, String unidadeMedida) {
         GraficoLinha lineChart = new GraficoLinha(titulo, unidadeMedida);
 
@@ -89,7 +93,7 @@ public class GraficoLinha extends ApplicationFrame {
         lineChart.setVisible(true);
     }   
 
-    // Método privado para adicionar uma linha horizontal representando a média
+    // Adiciona uma linha horizontal representando a média ao gráfico.
     private void addMediaLine(double media) {
         // Obtendo o plot do gráfico
         XYPlot plot = (XYPlot) chart.getPlot();

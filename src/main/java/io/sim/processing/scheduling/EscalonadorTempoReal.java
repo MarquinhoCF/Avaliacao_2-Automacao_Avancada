@@ -4,18 +4,27 @@ import java.util.ArrayList;
 
 import io.sim.processing.scheduling.excel.RelatorioEscalonamento;
 
+/**
+ * A classe EscalonadorTempoReal representa um escalonador para sistemas de tempo real, que executa como uma Thread.
+ * Ela realiza cálculos relacionados a tarefas de tempo real, verifica escalonabilidade e gera um relatório de escalonamento.
+ */
 public class EscalonadorTempoReal extends Thread {
 
+    /**
+     * Construtor padrão da classe EscalonadorTempoReal.
+     */
     public EscalonadorTempoReal() {
 
     }
 
+    // Método principal que será executado quando a thread for iniciada.
+    // Realiza cálculos relacionados a tarefas de tempo real, verifica escalonabilidade e gera um relatório de escalonamento.
     @Override
     public void run() {
         // Defina os parâmetros das tarefas
         ArrayList<Double> Ji = RelatorioEscalonamento.obterDadosColuna(2);   // Tempo de Chegada
         ArrayList<Double> Ci = RelatorioEscalonamento.obterDadosColuna(3);   // Tempo de Conclusão
-        ArrayList<Double> Pi = RelatorioEscalonamento.obterDadosColuna(4);  // Período
+        ArrayList<Double> Pi = RelatorioEscalonamento.obterDadosColuna(4);   // Período
         ArrayList<Double> Di = RelatorioEscalonamento.obterDadosColuna(5);   // Deadline
 
         int numTarefas = Ji.size();
@@ -61,12 +70,12 @@ public class EscalonadorTempoReal extends Thread {
         return Wi;
     }
 
+    // Calcula o tempo de espera individual (Wi) para uma tarefa específica.
     private static double calcularWiIndividual(ArrayList<Double> Ji, ArrayList<Double> Ci, ArrayList<Double> Pi, ArrayList<Double> Di, int i) {
         double Wi = Ci.get(i);
 
         for (int j = 0; j < Ji.size(); j++) {
             if (i != j) {
-                // Corrigindo a lógica para calcular Wi
                 Wi += Math.ceil((Wi + Ji.get(j)) / Pi.get(i)) * Ci.get(j);
             }
         }
@@ -74,9 +83,7 @@ public class EscalonadorTempoReal extends Thread {
         return Wi;
     }
 
-    
-
-    // Método para calcular o Ri
+    // Calcula os tempos de resposta (Ri) para todas as tarefas.
     private static ArrayList<Double> calcularRi(ArrayList<Double> Wi, ArrayList<Double> Ji) {
         int numTarefas = Wi.size();
         ArrayList<Double> Ri = new ArrayList<>();
@@ -88,7 +95,7 @@ public class EscalonadorTempoReal extends Thread {
         return Ri;
     }
 
-    // Método para calcular a utilização do processador
+    // Calcula a utilização do processador para o conjunto de tarefas.
     private static double calcularUtilizacaoProcessador(ArrayList<Double> Ci, ArrayList<Double> Pi) {
         int numTarefas = Ci.size();
         double utilizacao = 0;
@@ -100,7 +107,7 @@ public class EscalonadorTempoReal extends Thread {
         return utilizacao;
     }
 
-    // Método para calcular o tempo de resposta máximo
+    // Calcula o tempo de resposta máximo entre todas as tarefas.
     private static double calcularTempoRespostaMaximo(ArrayList<Double> Ri) {
         double tempoRespostaMaximo = 0;
         for (double valor : Ri) {
@@ -109,12 +116,10 @@ public class EscalonadorTempoReal extends Thread {
         return tempoRespostaMaximo;
     }
 
-    // Método para verificar escalonabilidade
+    // Calcula o limite de utilização do processador para verificar a escalonabilidade.
     private static double calculaLimiteUtilizacao(int numTarefas, ArrayList<Double> Pi, ArrayList<Double> Di) {
-        // Adicionando a lógica correta para calcular o limite de utilização
         double limiteUtilizacao = numTarefas * (Math.pow(2, 1.0 / numTarefas) - 1);
 
-        // Corrigindo a verificação
         for (int i = 0; i < numTarefas; i++) {
             limiteUtilizacao += Di.get(i) / Pi.get(i);
         }

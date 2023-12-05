@@ -3,7 +3,12 @@ package io.sim.processing;
 // import io.sim.processing.reconciliation.CalcularEstatisticas;
 import io.sim.processing.scheduling.EscalonadorTempoReal;
 
-public class AuxiliarAV2Parte1 {
+/**
+ * A classe AuxiliarAV2Parte1e2 é responsável por iniciar a simulação, executando
+ * um escalonador de tempo real. Ela contém um método principal (main) que inicia
+ * o escalonador e pode ser usada para realizar simulações e testes.
+ */
+public class AuxiliarAV2Parte1e2 {
     
     public static void main(String[] args) throws InterruptedException {
         // long taxaAquisicao = 40;
@@ -13,8 +18,7 @@ public class AuxiliarAV2Parte1 {
         // calc.start();
         // calc.join();
 
-        EscalonadorTempoReal esc = new EscalonadorTempoReal();
-        esc.start();
-        
+        EscalonadorTempoReal escalonador = new EscalonadorTempoReal();
+        escalonador.start();
     }
 }

@@ -14,11 +14,16 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
 
+/**
+ * A classe GraficoDispersao representa um gráfico de dispersão utilizando a biblioteca JFreeChart.
+ * Permite a criação de gráficos com dados de tempo e distância.
+ */
 public class GraficoDispersao extends ApplicationFrame {
     private JFreeChart chart;
     private XYSeries series;
     private XYSeriesCollection dataset;
 
+    // Construtor da classe GraficoDispersao.
     public GraficoDispersao(String title) {
         super(title);
         series = new XYSeries("Data");
@@ -39,14 +44,17 @@ public class GraficoDispersao extends ApplicationFrame {
         setContentPane(chartPanel);
     }
 
-    public JFreeChart getChart(){
+    // Obtém o gráfico gerado.
+    public JFreeChart getChart() {
         return chart;
     }
 
+    // Adiciona dados ao gráfico.
     public void addData(double x, double y) {
         series.add(x, y);
     }
 
+    // Método estático para plotar gráficos de dispersão para diferentes conjuntos de dados.
     public static void plotarGraficosDispersoes(ArrayList<ArrayList<Double>> todosOsT, ArrayList<ArrayList<Double>> todosOsD) {
         if (todosOsD.size() == todosOsT.size()) {
             for (int i = 0; i < todosOsT.size(); i++) {
@@ -64,6 +72,7 @@ public class GraficoDispersao extends ApplicationFrame {
         }
     }
 
+    // Método auxiliar para plotar gráficos de dispersão individualmente.
     private static void auxPlotarGraficos(String title, ArrayList<Double> xData, ArrayList<Double> yData) {
         double minX = xData.stream().mapToDouble(Double::doubleValue).min().orElse(0);
         double maxX = xData.stream().mapToDouble(Double::doubleValue).max().orElse(10);

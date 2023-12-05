@@ -9,6 +9,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/**
+ * A classe ReconciliationReport é responsável por criar, atualizar e ler dados em uma planilha Excel
+ * contendo informações relacionadas ao processo de reconciliação, como tempos, distâncias, estatísticas e velocidades.
+ * Ela utiliza a biblioteca Apache POI para manipulação de arquivos Excel no formato XLSX.
+ */
 public class ReconciliationReport {
 
     private static String fileName = "ReconciliationReport.xlsx";
@@ -16,6 +21,8 @@ public class ReconciliationReport {
     public ReconciliationReport() {
 
     }
+
+    // ------------------------------------------- Planilha TimeDistanceReport -----------------------------------------------
 
     // Método para criar a planilha com os cabeçalhos "t0, d0, t1, d1, t2, d2"
     public static void criaReconciliationReport(int numeroParticoes) {
@@ -114,6 +121,8 @@ public class ReconciliationReport {
         return dadosLinha;
     }
 
+    // ------------------------------------------- Planilha Statistics -----------------------------------------------
+
     // Adiciona uma nova sheet com o cabeçalho especificado
     public static void adicionaSheetEstatisticas(int numeroParticoes) {
         try (Workbook workbook = WorkbookFactory.create(new FileInputStream(fileName))) {
@@ -164,6 +173,8 @@ public class ReconciliationReport {
         row.createCell(9).setCellValue("dTOTAL");
     }
 
+    // ------------------------------------------- Planilha Speeds -----------------------------------------------
+
     // Adiciona uma nova sheet com o cabeçalho especificado
     public static void adicionaSheetVelocidade(int numeroParticoes) {
         try (Workbook workbook = WorkbookFactory.create(new FileInputStream(fileName))) {
@@ -213,7 +224,9 @@ public class ReconciliationReport {
         row.createCell(9).setCellValue("Km/h");
     }
 
-    // Lê os dados de uma coluna específica e retorna como ArrayList<Double>
+    // -------------------------- Metodos Gerais podem ser usadas em qualquer planilha desse arquivo -----------------------------
+
+    // Lê os dados de uma coluna específica em uma planilha específica e retorna como ArrayList<Double>
     public static ArrayList<Double> lerColunaReconciliation(int numSheet, int coluna) {
         ArrayList<Double> valores = new ArrayList<>();
 
@@ -238,6 +251,7 @@ public class ReconciliationReport {
         return valores;
     }
 
+    // Escreve os dados em uma coluna específica em uma planilha específica
     public static void escreverDadosColunaReconciliation(int numSheet,int coluna, ArrayList<Double> valores) {
         try (Workbook workbook = WorkbookFactory.create(new FileInputStream(fileName))) {
             Sheet sheet = workbook.getSheetAt(numSheet);

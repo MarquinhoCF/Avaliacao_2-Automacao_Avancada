@@ -9,13 +9,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Classe responsável por gerenciar o relatório de escalonamento em formato Excel.
+ */
 public class RelatorioEscalonamento {
     private static String fileName = "RelatorioEscalonamento.xlsx";
 
+    // Construtor padrão da classe RelatorioEscalonamento.
     public RelatorioEscalonamento() {
 
     }
 
+    // Cria uma tabela de tarefas vazia no arquivo Excel.
     public static void criarTabelaTarefas() {
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Tabela de Tarefas");
@@ -34,6 +39,7 @@ public class RelatorioEscalonamento {
         }
     }
 
+    // Cria o cabeçalho da tabela de tarefas.
     private static void criaCabecalhoTabelaTarefas(Sheet sheet) {
         Row headerRow = sheet.createRow(0);
 
@@ -51,6 +57,7 @@ public class RelatorioEscalonamento {
         }
     }
 
+    // Registra o tempo de execução de uma tarefa no relatório.
     public synchronized static void registrarTempo(String nome, int numeroTarefa, long startTime, long inicio, long fim, long estimativaManualDi) {
         synchronized (RelatorioEscalonamento.class) {
             String nomeTarefa = "T" + numeroTarefa;
@@ -79,15 +86,15 @@ public class RelatorioEscalonamento {
 
                 cell = row.createCell(3);
                 cell.setCellValue(Ci);
-                System.out.println(nomeTarefa + " - Tempo de Conclusão (Ci): " + Ci + " milisegundos");
+                System.out.println(nomeTarefa + " - Tempo de Conclusão (Ci): " + Ci + " milissegundos");
 
                 cell = row.createCell(4);
                 cell.setCellValue(tempoProcessamento);
-                System.out.println(nomeTarefa + " - Tempo de Processamento (Pi): " + tempoProcessamento + " milisegundos");
+                System.out.println(nomeTarefa + " - Tempo de Processamento (Pi): " + tempoProcessamento + " milissegundos");
 
                 cell = row.createCell(5);
                 cell.setCellValue(Di);
-                System.out.println(nomeTarefa + " - Tempo de Atraso (Di): " + Di + " milisegundos");
+                System.out.println(nomeTarefa + " - Tempo de Atraso (Di): " + Di + " milissegundos");
 
                 try (FileOutputStream outputStream = new FileOutputStream(fileName)) {
                     workbook.write(outputStream);
@@ -100,6 +107,7 @@ public class RelatorioEscalonamento {
         }
     }
 
+    // Obtém os dados de uma coluna específica da tabela de tarefas.
     public static ArrayList<Double> obterDadosColuna(int coluna) {
         ArrayList<Double> valores = new ArrayList<>();
 
@@ -124,6 +132,7 @@ public class RelatorioEscalonamento {
         return valores;
     }
 
+    // Cria a planilha "Análise de Escalonamento" no arquivo Excel, caso não exista.
     public static void criarAnaliseEscalonamento() {
         try (FileInputStream fileInputStream = new FileInputStream(fileName)) {
             Workbook workbook = WorkbookFactory.create(fileInputStream);
@@ -155,6 +164,7 @@ public class RelatorioEscalonamento {
         }
     }
 
+    // Adiciona os valores da análise de escalonamento na planilha correspondente.
     public static void adicionarValoresAnaliseEscalonamento(double tempoRespostaMaximo, double utilizacao, double limiteUtilizacao, String escalonavel) {
         try (FileInputStream fileInputStream = new FileInputStream(fileName)) {
             Workbook workbook = WorkbookFactory.create(fileInputStream);

@@ -6,12 +6,18 @@ import java.util.List;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+/**
+ * A classe LeitorRelatorioCarros é responsável por ler dados de um arquivo Excel contendo informações de timestamps e distâncias.
+ * Ela utiliza a biblioteca Apache POI para manipulação de arquivos Excel no formato XLSX.
+ */
 public class LeitorRelatorioCarros {
 
+    // Construtor padrão da classe LeitorRelatorioCarros.
     public LeitorRelatorioCarros() {
-
+        // O construtor está vazio, pois esta classe contém apenas métodos estáticos.
     }
 
+    // Método estático para ler dados de um arquivo Excel.
     public static void lerExcel(String filePath, List<Double> timestamps, List<Double> distances) throws IOException {
         FileInputStream excelFile = new FileInputStream(filePath);
         Workbook workbook = new XSSFWorkbook(excelFile);
