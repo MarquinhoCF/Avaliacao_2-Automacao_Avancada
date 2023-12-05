@@ -11,6 +11,7 @@ Email: marcos.ferreira8@estudante.ufla.br
 
 ## Introdução
 Este projeto visa abordar desafios relacionados à logística e mobilidade, focando em otimizar custos e prazos no deslocamento de veículos. Utilizando dados da Revista Quatro Rodas sobre a relação entre velocidade e consumo, a proposta é implementar soluções de Reconciliação de Dados (RD) para determinar a melhor velocidade em diferentes pontos de passagem de veículos, considerando influências como trânsito e condições da via.
+![image](https://github.com/MarquinhoCF/Avaliacao_2-Automacao_Avancada/blob/main/assets/Ilustracao_AV2.png)
 
 Tomando como base a aplicação da AV1 que consistia em simular um ambiente de mobilidade urbana com várias entidades interagindo entre si: 
 ![image](https://github.com/MarquinhoCF/Avaliacao_2-Automacao_Avancada/blob/main/assets/Ilustracao_AV1.png)
